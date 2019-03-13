@@ -1,0 +1,29 @@
+version: '3'
+services:
+  linebot-service:
+    build: 
+      context: ./linebot-service
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./linebot-service:/app
+  
+  web-api-service:
+    build:
+      context: ./web-api-service
+      dockerfile: Dockerfile.dev
+    ports:
+      - 8080:8080
+    volumes:
+      - ./web-api-service:/app
+
+  web-frontend-service:
+    build:
+      context: ./web-frontend-service
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./web-api-service:/app
+
+  database-service:
+    build:
+      context: ./database-service
+      dockerfile: Dockerfile.dev
