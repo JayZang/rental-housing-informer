@@ -4,9 +4,9 @@ import config591 from '../config/591'
 
 const homeURL = config591.homeURL
 const apiURL = config591.apiURL
-let dateFromLastToken: Date = null
-let CSRF_Token: String = null
-let new_591_session: String = null
+let dateFromLastToken: Date = undefined
+let CSRF_Token: String = undefined
+let new_591_session: String = undefined
 
 // 初始 591，造訪頁面取得相關 TOKEN 及 Session
 async function init() {
@@ -39,16 +39,35 @@ async function getAllRentalHouse(): Promise<RentalApiResponseSchema591> {
   return res.data
 }
 
+// 給予 URL 參數搜尋
+async function getByQueryString(query: string): Promise<RentalApiResponseSchema591> {
+  await checkVariableValid()
+
+  const res = await axios({
+    method: 'GET',
+    url: `${apiURL}?${query}`,
+    responseType: 'json',
+    headers: {
+      'X-CSRF-TOKEN': CSRF_Token,
+      'Cookie': `591_new_session=${new_591_session};`
+    }
+  })
+
+  getSessionKeyFromResponse(res)
+
+  return res.data
+}
+
 // 確認 Token, Session 及有效期限是否為有效的，否則執行 init 函數
 async function checkVariableValid() {
   const now = new Date()
   const validDuration = 60 * 60 * 1000
-  const isValidDuration = dateFromLastToken ? 
+  const isValidDuration = dateFromLastToken ?
     (now.valueOf() - dateFromLastToken.valueOf() < validDuration) : false
 
-  if (!CSRF_Token || 
-      !new_591_session || 
-      !dateFromLastToken || 
+  if (!CSRF_Token ||
+      !new_591_session ||
+      !dateFromLastToken ||
       !isValidDuration) {
     await init()
   }
@@ -68,14 +87,15 @@ function getSessionKeyFromResponse(res: AxiosResponse) {
 
 export default {
   init,
-  getAllRentalHouse
+  getAllRentalHouse,
+  getByQueryString
 }
 
 // 租屋 591 API 返回資料之結構
 export interface RentalApiResponseSchema591 {
   status: number
   data: {
-    topData: [{
+    topData: {
       is_new_index: number
       is_new_list: number
       type: number
@@ -100,9 +120,9 @@ export interface RentalApiResponseSchema591 {
       price: string
       price_unit: string
       onepxImg: string
-    }]
-    biddings: [Object]
-    data: [{
+    }[]
+    biddings: Object[]
+    data: {
       id: number
       user_id: number
       address: string
@@ -114,7 +134,7 @@ export interface RentalApiResponseSchema591 {
       room: number
       area: number
       price: string
-      storeprice:number
+      storeprice: number
       comment_total: number
       comment_unread: number
       comment_ltime: number
@@ -191,10 +211,10 @@ export interface RentalApiResponseSchema591 {
       section_name: string
       addInfo: string
       onepxImg: string
-    }]
+    }[]
   }
   records: string
   is_recom: number
-  deal_recom: [Object]
+  deal_recom: object[]
   online_social_user: number
-} 
+}
