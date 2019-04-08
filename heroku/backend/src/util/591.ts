@@ -39,23 +39,19 @@ async function getAllRentalHouse(): Promise<RentalApiResponseSchema591> {
   return res.data
 }
 
-// 給予 URL 參數搜尋
-async function getByQueryString(query: string): Promise<RentalApiResponseSchema591> {
-  await checkVariableValid()
+// 利用 URL 參數取得租屋資料，最多90筆
+async function getRentalByQueryString(query: string): Promise<RentalData[]> {
+  let rentalData: RentalData[] = []
+  let rawData = await getRawDataByQueryString(query)
+  const recordCount = parseInt(rawData.records)
 
-  const res = await axios({
-    method: 'GET',
-    url: `${apiURL}?${query}`,
-    responseType: 'json',
-    headers: {
-      'X-CSRF-TOKEN': CSRF_Token,
-      'Cookie': `591_new_session=${new_591_session};`
-    }
-  })
+  rentalData = rentalData.concat(rawData.data.data)
+  for (let firstRow = 30; recordCount > 30 && firstRow <= 60; firstRow += 30) {
+    rawData = await getRawDataByQueryString(query, firstRow)
+    rentalData = rentalData.concat(rawData.data.data)
+  }
 
-  getSessionKeyFromResponse(res)
-
-  return res.data
+  return rentalData
 }
 
 // 確認 Token, Session 及有效期限是否為有效的，否則執行 init 函數
@@ -85,10 +81,120 @@ function getSessionKeyFromResponse(res: AxiosResponse) {
   })
 }
 
+// 給予 URL 參數及從第幾筆數搜尋
+async function getRawDataByQueryString(query: string, firstRow?: number): Promise<RentalApiResponseSchema591> {
+  await checkVariableValid()
+
+  const res = await axios({
+    method: 'GET',
+    url: `${apiURL}?${query}${firstRow ? `&firstRow=${firstRow}` : ''}`,
+    responseType: 'json',
+    headers: {
+      'X-CSRF-TOKEN': CSRF_Token,
+      'Cookie': `591_new_session=${new_591_session};`
+    }
+  })
+
+  getSessionKeyFromResponse(res)
+
+  return res.data
+}
+
 export default {
   init,
   getAllRentalHouse,
-  getByQueryString
+  getRentalByQueryString
+}
+
+export interface RentalData {
+  id: number
+  user_id: number
+  address: string
+  type: string
+  post_id: number
+  regionid: number
+  sectionid: number
+  streetid: number
+  room: number
+  area: number
+  price: string
+  storeprice: number
+  comment_total: number
+  comment_unread: number
+  comment_ltime: number
+  hasimg: number
+  kind: number
+  shape: number
+  houseage: number
+  posttime: string
+  updatetime: number
+  refreshtime: number
+  checkstatus: number
+  status: string
+  closed: number
+  living: string
+  condition: string
+  isvip: number
+  mvip: number
+  is_combine: number
+  cover: string
+  browsenum: number
+  browsenum_all: number
+  floor2: number
+  floor: number
+  ltime: string
+  cases_id: number
+  social_house: number
+  distance: number
+  search_name: string
+  mainarea: undefined,
+  balcony_area: undefined,
+  groundarea: undefined,
+  linkman: string
+  housetype: number
+  street_name: string
+  alley_name: string
+  lane_name: string
+  addr_number_name: string
+  kind_name_img: string
+  address_img: string
+  cases_name: string
+  layout: string
+  layout_str: string
+  allfloor: number
+  floorInfo: string
+  house_img: string
+  houseimg: undefined,
+  cartplace: string
+  space_type_str: string
+  photo_alt: string
+  addition4: number
+  addition2: number
+  addition3: number
+  vipimg: string
+  vipstyle: string
+  vipBorder: string
+  new_list_comment_total: number
+  comment_class: string
+  price_hide: string
+  kind_name: string
+  photoNum: string
+  filename: string
+  nick_name: string
+  new_img: string
+  regionname: string
+  sectionname: string
+  icon_name: string
+  icon_class: string
+  fulladdress: string
+  address_img_title: string
+  browsenum_name: string
+  unit: string
+  houseid: number
+  region_name: string
+  section_name: string
+  addInfo: string
+  onepxImg: string
 }
 
 // 租屋 591 API 返回資料之結構
@@ -122,96 +228,7 @@ export interface RentalApiResponseSchema591 {
       onepxImg: string
     }[]
     biddings: Object[]
-    data: {
-      id: number
-      user_id: number
-      address: string
-      type: string
-      post_id: number
-      regionid: number
-      sectionid: number
-      streetid: number
-      room: number
-      area: number
-      price: string
-      storeprice: number
-      comment_total: number
-      comment_unread: number
-      comment_ltime: number
-      hasimg: number
-      kind: number
-      shape: number
-      houseage: number
-      posttime: string
-      updatetime: number
-      refreshtime: number
-      checkstatus: number
-      status: string
-      closed: number
-      living: string
-      condition: string
-      isvip: number
-      mvip: number
-      is_combine: number
-      cover: string
-      browsenum: number
-      browsenum_all: number
-      floor2: number
-      floor: number
-      ltime: string
-      cases_id: number
-      social_house: number
-      distance: number
-      search_name: string
-      mainarea: null,
-      balcony_area: null,
-      groundarea: null,
-      linkman: string
-      housetype: number
-      street_name: string
-      alley_name: string
-      lane_name: string
-      addr_number_name: string
-      kind_name_img: string
-      address_img: string
-      cases_name: string
-      layout: string
-      layout_str: string
-      allfloor: number
-      floorInfo: string
-      house_img: string
-      houseimg: null,
-      cartplace: string
-      space_type_str: string
-      photo_alt: string
-      addition4: number
-      addition2: number
-      addition3: number
-      vipimg: string
-      vipstyle: string
-      vipBorder: string
-      new_list_comment_total: number
-      comment_class: string
-      price_hide: string
-      kind_name: string
-      photoNum: string
-      filename: string
-      nick_name: string
-      new_img: string
-      regionname: string
-      sectionname: string
-      icon_name: string
-      icon_class: string
-      fulladdress: string
-      address_img_title: string
-      browsenum_name: string
-      unit: string
-      houseid: number
-      region_name: string
-      section_name: string
-      addInfo: string
-      onepxImg: string
-    }[]
+    data: RentalData[]
   }
   records: string
   is_recom: number

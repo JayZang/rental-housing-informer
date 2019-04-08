@@ -1,8 +1,7 @@
 import express, { Request, Response } from 'express'
 import {
   Client,
-  FlexBubble,
-  FlexMessage
+  FlexBubble
 } from '@line/bot-sdk'
 import util591 from '../util/591'
 import lineConfig from '../config/line'
@@ -12,23 +11,25 @@ import { SubscriptionRecordType } from '../models/RentalSubscriptionRecord591'
 const router = express.Router()
 const lineClinet = new Client(lineConfig)
 
-router.get('/hours', handleHoursEvent)
+router.get('/hours', routeHours)
 
 export default router
 
 ////////// Router Functions //////////
-async function handleHoursEvent(req: Request, res: Response) {
+async function routeHours(req: Request, res: Response) {
   const users = await User.find().populate('subscription591').exec()
   users.forEach(async (user: UserDocumentType) => {
     if (user.subscription591.length <= 0) return
 
     const queryString = (<SubscriptionRecordType><any>user.subscription591[0]).queryString
-    const data = await util591.getByQueryString(queryString)
     const lineId = user.lineId
     const bubbleList: FlexBubble[] = []
+    let rentalData = await util591.getRentalByQueryString(queryString)
+    // 最多拿10筆顯示於 line 上
+    rentalData = rentalData.slice(0, 10)
 
-    data.data.data.forEach(item => {
-      const bubble: FlexBubble = {
+    rentalData.forEach(item => {
+      bubbleList.push({
         type: 'bubble',
         hero: {
           type: 'image',
@@ -90,21 +91,17 @@ async function handleHoursEvent(req: Request, res: Response) {
             }
           }]
         }
-      }
-
-      bubbleList.push(bubble)
+      })
     })
 
-    const message: FlexMessage = {
+    lineClinet.pushMessage(lineId, {
       type: 'flex',
-      altText: `您有${data.data.data.length}筆新資料`,
+      altText: `您有${rentalData.length}筆新資料`,
       contents: {
         type: 'carousel',
         contents: bubbleList
       }
-    }
-
-    lineClinet.pushMessage(lineId, message)
+    })
   })
 
   res.send('ok')
