@@ -1,8 +1,7 @@
 import express, { Request, Response } from 'express'
 import {
   Client,
-  TextMessage,
-  ImageMessage,
+  FlexBubble,
   FlexMessage
 } from '@line/bot-sdk'
 import util591 from '../util/591'
@@ -26,14 +25,14 @@ async function handleHoursEvent(req: Request, res: Response) {
     const queryString = (<SubscriptionRecordType><any>user.subscription591[0]).queryString
     const data = await util591.getByQueryString(queryString)
     const lineId = user.lineId
-    const message: FlexMessage = {
-      type: 'flex',
-      altText: 'altText',
-      contents: {
+    const bubbleList: FlexBubble[] = []
+
+    data.data.data.forEach(item => {
+      const bubble: FlexBubble = {
         type: 'bubble',
         hero: {
           type: 'image',
-          url: data.data.data[1].cover,
+          url: item.cover,
           aspectRatio: '4:3',
           aspectMode: 'cover',
           size: 'full'
@@ -43,7 +42,7 @@ async function handleHoursEvent(req: Request, res: Response) {
           layout: 'vertical',
           contents: [{
             type: 'text',
-            text: data.data.data[1].address_img_title,
+            text: item.address_img_title,
             size: 'lg',
             weight: 'bold'
           }, {
@@ -51,37 +50,60 @@ async function handleHoursEvent(req: Request, res: Response) {
             margin: 'sm'
           }, {
             type: 'text',
-            text: data.data.data[1].kind_name + ' | ' + data.data.data[1].layout + ' | ' + data.data.data[1].floorInfo,
-            margin: 'md'
-          }, {
-            type: 'text',
-            text: data.data.data[1].section_name + ' - ' + data.data.data[1].street_name
-          }, {
-            type: 'text',
-            text: data.data.data[1].price + ' ' + data.data.data[1].unit,
-            align: 'end',
+            text: item.kind_name + ' | ' + item.layout + ' | ' + item.floorInfo,
             margin: 'lg'
+          }, {
+            type: 'text',
+            text: item.section_name + ' - ' + item.street_name
+          }, {
+            type: 'box',
+            layout: 'horizontal',
+            spacing: 'md',
+            contents: [{
+              type: 'text',
+              text: item.price,
+              color: '#FF4214',
+              align: 'end',
+              flex: 1,
+              size: 'lg',
+              weight: 'bold'
+            }, {
+              type: 'text',
+              text: item.unit,
+              flex: 0,
+              gravity: 'bottom',
+              size: 'xxs'
+            }]
           }]
         },
         footer: {
           type: 'box',
           layout: 'vertical',
           contents: [{
-            type: 'separator',
-            margin: 'none'
-          }, {
             type: 'button',
             style: 'link',
+            height: 'sm',
             action: {
               type: 'uri',
               label: '591 連結',
-              uri: `https://rent.591.com.tw/rent-detail-${data.data.data[1].id}.html`
+              uri: `https://rent.591.com.tw/rent-detail-${item.id}.html`
             }
           }]
         }
       }
+
+      bubbleList.push(bubble)
+    })
+
+    const message: FlexMessage = {
+      type: 'flex',
+      altText: `您有${data.data.data.length}筆新資料`,
+      contents: {
+        type: 'carousel',
+        contents: bubbleList
+      }
     }
-    console.log(data.data.data[1].cover)
+
     lineClinet.pushMessage(lineId, message)
   })
 
