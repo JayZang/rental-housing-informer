@@ -3,6 +3,7 @@ import bodyParser from 'body-parser'
 import mongoose from 'mongoose'
 import appConfig from './config/appServer'
 import { middleware as lineMiddleware } from '@line/bot-sdk'
+import UserModel from './models/RentalSubscriptionRecord591'
 
 // Mongo DB 連線
 const mongoUri = appConfig.mongoUri

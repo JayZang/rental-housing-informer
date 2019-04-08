@@ -1,5 +1,6 @@
-import mongoose, { Document } from 'mongoose'
+import mongoose, { Document, Model } from 'mongoose'
 import { modelName as modelName591 } from './RentalSubscriptionRecord591'
+import lineConfig from '../config/line'
 
 const UserSchema = new mongoose.Schema({
   password: {
@@ -21,7 +22,16 @@ const UserSchema = new mongoose.Schema({
   timestamps: true
 })
 
-export default mongoose.model('User', UserSchema)
+UserSchema.statics.createSeed = async function () {
+  const user: UserDocumentType = new this({
+    password: '123456',
+    name: 'Jay',
+    lineId: lineConfig.yourUserId
+  })
+  await user.save()
+}
+
+export default mongoose.model<UserDocumentType, UserModel>('User', UserSchema)
 
 export type UserType = {
   _id: string,
@@ -32,3 +42,7 @@ export type UserType = {
 }
 
 export type UserDocumentType = Document & UserType
+
+export type UserModel = Model<UserDocumentType> & {
+  createSeed: () => Promise<void>
+}
