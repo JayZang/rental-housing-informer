@@ -1,4 +1,4 @@
-import express, { Request, Response } from 'express'
+import express, { Request, Response, NextFunction } from 'express'
 import _ from 'lodash'
 import { Client } from '@line/bot-sdk'
 import util591 from '../util/591'
@@ -12,17 +12,13 @@ const router = express.Router()
 const lineClinet = new Client(lineConfig)
 const GSTK = appConfig.googleScriptTriggerKey
 
-router.get('/hours', routeHours)
+router.get('/hours', checkIsFromValid, routeHours)
 
 export default router
 
 ////////// Router Functions //////////
 // 每小時定時搜尋的路由，由 Google App Script 觸發
 async function routeHours(req: Request, res: Response) {
-  if (!checkIsFromValid(req)) {
-    return res.status(401).send()
-  }
-
   const promises: Promise<any>[] = []
   const users = await User.find().populate({path: 'subscription591', option: {limit: 1}}).exec()
   users.forEach((user: UserDocumentType) => {
@@ -67,9 +63,10 @@ async function routeHours(req: Request, res: Response) {
 }
 
 ////////// 自訂函數 //////////
-// 從 request 認證是否為合法來源送來的
-function checkIsFromValid(req: Request) {
+// Middleware，從 request 認證是否為合法來源送來的
+function checkIsFromValid(req: Request, res: Response, next: NextFunction) {
   const rcvGSTK = req.header('X-Auth')
-  return GSTK === rcvGSTK
+  if (GSTK === rcvGSTK) return next()
+  else res.status(401).send()
 }
 

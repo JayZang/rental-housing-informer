@@ -8,6 +8,12 @@ let dateFromLastToken: Date = undefined
 let CSRF_Token: String = undefined
 let new_591_session: String = undefined
 
+export default {
+  init,
+  getAllRentalHouse,
+  getRentalByQueryString
+}
+
 // 初始 591，造訪頁面取得相關 TOKEN 及 Session
 async function init() {
   const res = await axios.get(homeURL)
@@ -98,12 +104,6 @@ async function getRawDataByQueryString(query: string, firstRow?: number): Promis
   getSessionKeyFromResponse(res)
 
   return res.data
-}
-
-export default {
-  init,
-  getAllRentalHouse,
-  getRentalByQueryString
 }
 
 export interface RentalData {

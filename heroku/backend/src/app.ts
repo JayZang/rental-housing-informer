@@ -2,6 +2,7 @@ import express from 'express'
 import bodyParser from 'body-parser'
 import mongoose from 'mongoose'
 import appConfig from './config/appServer'
+import lineConfig from './config/line'
 import { middleware as lineMiddleware } from '@line/bot-sdk'
 import expressValidator from 'express-validator'
 
@@ -15,7 +16,7 @@ mongoose.connect(mongoUri, {useNewUrlParser: true})
 const app = express()
 
 // Express Setting
-app.use('/line/', lineMiddleware)
+app.use('/line/', lineMiddleware(lineConfig))
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(expressValidator())
