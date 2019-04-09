@@ -3,7 +3,7 @@ import bodyParser from 'body-parser'
 import mongoose from 'mongoose'
 import appConfig from './config/appServer'
 import { middleware as lineMiddleware } from '@line/bot-sdk'
-import UserModel from './models/RentalSubscriptionRecord591'
+import expressValidator from 'express-validator'
 
 // Mongo DB 連線
 const mongoUri = appConfig.mongoUri
@@ -18,6 +18,7 @@ const app = express()
 app.use('/line/', lineMiddleware)
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
+app.use(expressValidator())
 
 // Router Setting
 import router591 from './controllers/591'

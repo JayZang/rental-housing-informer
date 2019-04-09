@@ -14,7 +14,8 @@ const RecordSchema = new mongoose.Schema({
   queryString: {
     type: String,
     required: true
-  }
+  }, 
+  readRecord: [Number]
 }, {
   timestamps: true
 })
@@ -34,6 +35,7 @@ export type SubscriptionRecordType = {
   userId: mongoose.Types.ObjectId,
   title: string,
   queryString: string
+  readRecord: number[]
 }
 
 export type SubscriptionRecordDocumentType = Document & SubscriptionRecordType
