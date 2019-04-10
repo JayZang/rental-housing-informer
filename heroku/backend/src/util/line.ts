@@ -1,10 +1,50 @@
 import {
-  FlexBubble
+  FlexBubble,
+  TemplateMessage
 } from '@line/bot-sdk'
 import { RentalData } from './591'
+import appConfig from '../config/appServer'
 
 export default {
+  getAuthRequirementButtonTemplate,
+  getNon591SubscriptionHintButtonTemplate,
   getRentalBubbleTemplate
+}
+
+// 用戶認證連結之 Button Message 模板
+function getAuthRequirementButtonTemplate(objectId: string): TemplateMessage {
+  return {
+    type: 'template',
+    altText: '前往用戶認證',
+    template: {
+      type: 'buttons',
+      title: '用戶認證',
+      text: '您尚為未認證之用戶，點選按鍵前往認證中心',
+      actions: [{
+        label: '前往認證',
+        type: 'uri',
+        uri: `${appConfig.domain}/authentication/${objectId}`
+      }]
+    }
+  }
+}
+
+// 租屋訂閱中心連結之模板
+function getNon591SubscriptionHintButtonTemplate(): TemplateMessage {
+  return {
+    type: 'template',
+    altText: '前往租屋訂閱',
+    template: {
+      type: 'buttons',
+      title: '租屋訂閱',
+      text: '您尚未有租屋訂閱資料，點選按鍵前往訂閱',
+      actions: [{
+        label: '前往訂閱',
+        type: 'uri',
+        uri: `${appConfig.domain}/subscription`
+      }]
+    }
+  }
 }
 
 // 取得租屋物件資訊 line 模板，使用 FlexMessage 的 Bubble type

@@ -3,19 +3,23 @@ import { modelName as modelName591 } from './RentalSubscriptionRecord591'
 import lineConfig from '../config/line'
 
 const UserSchema = new mongoose.Schema({
-  password: {
-    required: true,
-    type: String,
-  },
+  password: String,
   name: String,
   email: String,
   lineId: {
     type: String,
     unique: true
   },
+  isLineFollowing: {
+    type: Boolean,
+    default: true
+  },
+  isAuth: {
+    type: Boolean,
+    default: false
+  },
   subscription591: [{
     type: mongoose.SchemaTypes.ObjectId,
-    required: true,
     ref: modelName591
   }]
 }, {
@@ -38,6 +42,8 @@ export type UserType = {
   name: string,
   email: string,
   lineId: string,
+  isLineFollowing: boolean,
+  isAuth: boolean,
   subscription591: Array<mongoose.Schema.Types.ObjectId>
 }
 
