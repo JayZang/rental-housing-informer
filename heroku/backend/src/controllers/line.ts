@@ -28,25 +28,25 @@ function lineReplyHook(req: Request, res: Response) {
 
 ///////// Other Functions /////////
 function replyHandleEvent(event: WebhookEvent) {
-  switch(event.type) {
+  switch (event.type) {
     case 'message':
       const message = event.message
 
-      switch(message.type) {
+      switch (message.type) {
         case 'text':
           return replyText(event.replyToken, message.text)
         default:
           return Promise.resolve()
       }
-    
+
     case 'follow':
       return handleFollow(event.replyToken, event.source.userId)
-    
+
     case 'unfollow':
       return handleUnfollow(event.source.userId)
 
     default:
-      Promise.resolve()
+      return Promise.resolve()
   }
 }
 
@@ -82,7 +82,7 @@ async function handleFollow(replyToken: string, lineId: string) {
     const messageTemplate = lineUtil.getAuthRequirementButtonTemplate(userObjectId)
 
     return replyTemplate(replyToken, messageTemplate)
-  } 
+  }
 
   // 使用者沒有訂閱紀錄，給予前往訂閱中心之連結
   else if (user.subscription591.length === 0) {
@@ -90,11 +90,13 @@ async function handleFollow(replyToken: string, lineId: string) {
 
     return replyTemplate(replyToken, messageTemplate)
   }
+
+  return Promise.resolve()
 }
 
 // 處理封鎖事件
 async function handleUnfollow(lineId: string) {
-  let user = await User.findOne({ lineId })
+  const user = await User.findOne({ lineId })
 
   if (!user) return Promise.resolve()
 

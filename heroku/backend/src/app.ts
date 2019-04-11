@@ -22,10 +22,12 @@ app.use(bodyParser.urlencoded({ extended: true }))
 app.use(expressValidator())
 
 // Router Setting
+import apiRouter from './controllers/api'
 import router591 from './controllers/591'
 import lineRouter from './controllers/line'
 import googleScriptRouter from './controllers/googleScriptTrigger'
 
+app.use('/api/', apiRouter)
 app.use('/591/', router591)
 app.use('/line/', lineRouter)
 app.use('/google-script-trigger/', googleScriptRouter)
