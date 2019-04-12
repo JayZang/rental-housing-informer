@@ -12,7 +12,7 @@ class App extends Component {
         <TopNavBar />
         <div className="app-content">
           <Route exact path="/" component={Home} />
-          <Route path="/authentication/:userId" component={authentication} />
+          <Route exact path="/authentication/:userId" component={authentication} />
         </div>
       </div>
     )

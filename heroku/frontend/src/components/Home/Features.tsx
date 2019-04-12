@@ -30,7 +30,7 @@ class Features extends Component<{}, FeaturesState> {
       <div className="features-container">
         <div className="features-content">
           {this.state.features
-            .map(feature => (<FeatureItem mainImg={feature.mainImg} title={feature.title} />))}
+            .map((feature, index) => (<FeatureItem mainImg={feature.mainImg} title={feature.title} key={index} />))}
         </div>
       </div>
     )
