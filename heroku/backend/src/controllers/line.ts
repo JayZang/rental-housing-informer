@@ -77,7 +77,7 @@ async function handleFollow(replyToken: string, lineId: string) {
   await user.save()
 
   // 使用者未認證，給予前往認證中心之連結
-  if (!user.isAuth) {
+  if (!user.authInform.isAuth) {
     const userObjectId = user._id
     const messageTemplate = lineUtil.getAuthRequirementButtonTemplate(userObjectId)
 
