@@ -1,1 +1,4 @@
 **/*/node_modules
+
+# 由前端建置複製到後端的檔案
+heroku/backend/public
