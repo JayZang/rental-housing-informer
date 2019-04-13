@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import copy from 'copy-to-clipboard'
 import linePic from '../../assets/img/line.png'
 
 interface AuthSuccessPanelProps {
@@ -6,6 +7,12 @@ interface AuthSuccessPanelProps {
 }
 
 class AuthSuccessPanel extends Component<AuthSuccessPanelProps> {
+  constructor(props: AuthSuccessPanelProps) {
+    super(props)
+
+    this.handleKeyPanelClick = this.handleKeyPanelClick.bind(this)
+  }
+
   render() {
     return (
       <div className="auth-success-panel-container">
@@ -19,12 +26,20 @@ class AuthSuccessPanel extends Component<AuthSuccessPanelProps> {
           </div>
         </div>
         <div className="auth-success-panel-content">
-          <pre className="auth-success-panel-key">
-            {this.props.authKey}
-          </pre>
+          <div className="auth-success-key-container">
+            <button type="button" className="btn btn-secondary">複製</button>
+            <pre className="auth-success-panel-key" onClick={this.handleKeyPanelClick}>
+              {this.props.authKey}
+            </pre>
+          </div>
         </div>
       </div>
     )
+  }
+
+  handleKeyPanelClick() {
+    const authKey = this.props.authKey
+    copy(authKey)
   }
 }
 

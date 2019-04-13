@@ -70,7 +70,8 @@ class Authentication extends Component<AuthenticationProps, AuthenticationState>
   componentWillMount() {
     const userId = this.props.match.params.userId
     checkIfNeedAuth(userId)
-      .then(result => this.setState({ isLoaded: true, isNeedAuth: result }))
+      .then(result => this.setState({ isLoaded: true, isNeedAuth: true, authKey: result }))
+      .catch(() => this.setState({ isLoaded: true, isNeedAuth: false }))
   }
 
   render() {

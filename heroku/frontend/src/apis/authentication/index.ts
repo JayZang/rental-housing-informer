@@ -12,12 +12,12 @@ import {
  * @param userId 
  * @return Promise<Boolean>
  */
-export async function checkIfNeedAuth(userId: string): Promise<boolean> {
+export async function checkIfNeedAuth(userId: string): Promise<string> {
   try {
-    await axios.get(`/api/authentication/${userId}`)
-    return Promise.resolve(true)
+    const res = await axios.get(`/api/authentication/${userId}`)
+    return Promise.resolve(res.data.authKey || '')
   } catch {
-    return Promise.resolve(false)
+    return Promise.reject()
   }
 }
 

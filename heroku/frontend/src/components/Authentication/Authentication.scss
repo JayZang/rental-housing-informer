@@ -56,12 +56,25 @@
       margin-top: 10px;
     }
 
+    .auth-success-key-container {
+      display: flex;
+
+      .btn {
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+      }
+    }
+
     .auth-success-panel-key {
       background-color: #292929;
       color: #fafafa;
       font-size: 16px;
       padding: 5px 10px;
       word-break: break-all;
+      position: relative;
+      margin: 0;
+      border-top-right-radius: .25rem;
+      border-bottom-right-radius: .25rem;
     }
   }
 }
