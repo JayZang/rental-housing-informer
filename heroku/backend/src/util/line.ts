@@ -1,14 +1,56 @@
 import {
+  Client,
+  Message as LineMessage,
   FlexBubble,
   TemplateMessage
 } from '@line/bot-sdk'
 import { RentalData } from './591'
 import appConfig from '../config/appServer'
+import lineConfig from '../config/line'
+
+const lineClient = new Client(lineConfig)
+
+export enum TextMessageInstructions {
+  UserAuth = 'auth-key'
+}
+
 
 export default {
+  replyText,
+  replyTemplate,
+  checkTextInstruction,
   getAuthRequirementButtonTemplate,
   getNon591SubscriptionHintButtonTemplate,
   getRentalBubbleTemplate
+}
+
+// 回復單純文字訊息
+function replyText(replyToken: string, texts: string | string[]) {
+  texts = Array.isArray(texts) ? texts : [texts]
+  return lineClient.replyMessage(
+    replyToken,
+    texts.map(text => ({ type: <any>'text', text }))
+  )
+}
+
+// 回復 Line 樣式模板
+function replyTemplate(replyToken: string, messages: LineMessage | LineMessage[]) {
+  messages = Array.isArray(messages) ? messages : [messages]
+  return lineClient.replyMessage(replyToken, messages)
+}
+
+// 確認字串訊息是否為指令用途，並返回指令碼
+function checkTextInstruction(text: string): string {
+  const instructionNames = Object.keys(TextMessageInstructions)
+
+  for (let i = 0; i < instructionNames.length; i ++) {
+    const instructionName = instructionNames[i]
+    const instructionKey = TextMessageInstructions[instructionName]
+    const textIndex = text.indexOf(instructionKey)
+    if (textIndex === 0) return instructionKey
+  }
+
+  return ''
 }
 
 // 用戶認證連結之 Button Message 模板

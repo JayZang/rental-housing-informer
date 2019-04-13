@@ -5,6 +5,8 @@ import appConfig from './config/appServer'
 import lineConfig from './config/line'
 import { middleware as lineMiddleware } from '@line/bot-sdk'
 import expressValidator from 'express-validator'
+import path from 'path'
+import fs from 'fs'
 
 // Mongo DB 連線
 const mongoUri = appConfig.mongoUri
@@ -20,6 +22,7 @@ app.use('/line/', lineMiddleware(lineConfig))
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(expressValidator())
+app.use(express.static(path.join(__dirname, '../public'), { maxAge: 31557600000 }))
 
 // Router Setting
 import apiRouter from './controllers/api'
@@ -31,5 +34,9 @@ app.use('/api/', apiRouter)
 app.use('/591/', router591)
 app.use('/line/', lineRouter)
 app.use('/google-script-trigger/', googleScriptRouter)
+app.use('*', (req, res) => {
+  const html = fs.readFileSync(path.resolve(__dirname, '../public/index.html'), 'utf-8')
+  res.send(html)
+})
 
 export default app

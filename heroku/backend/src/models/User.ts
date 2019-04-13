@@ -1,7 +1,6 @@
-import mongoose, { Document, Model } from 'mongoose'
+import mongoose, { Document, Model, DocumentQuery } from 'mongoose'
 import bcryptjs from 'bcryptjs'
 import { modelName as modelName591 } from './RentalSubscriptionRecord591'
-import lineConfig from '../config/line'
 
 const UserSchema = new mongoose.Schema<UserDocumentType>({
   account: {
@@ -28,7 +27,7 @@ const UserSchema = new mongoose.Schema<UserDocumentType>({
     },
     authKey: String,
     authKeyExpired: Date,
-    authDate: mongoose.SchemaTypes.Date
+    authDate: Date
   },
   subscription591: [{
     type: mongoose.SchemaTypes.ObjectId,
@@ -38,13 +37,17 @@ const UserSchema = new mongoose.Schema<UserDocumentType>({
   timestamps: true
 })
 
-UserSchema.statics.createSeed = async function () {
-  const user: UserDocumentType = new this({
-    password: '123456',
-    name: 'Jay',
-    lineId: lineConfig.yourUserId
-  })
-  await user.save()
+UserSchema.statics.findByLineId = async function (lineId: string): Promise<UserDocumentType> {
+  const Users: UserModel = this
+  return Users.findOne({ lineId })
+}
+
+UserSchema.statics.findHoursPushTargets = async function (): Promise<UserDocumentType[]> {
+  const Users: UserModel = this
+  return Users.find({
+    isLineFollowing: true,
+    'authInform.isAuth': true
+  }).populate({ path: 'subscription591', option: { limit: 1 } }).exec()
 }
 
 UserSchema.pre<UserDocumentType>('save', function(next) {
@@ -73,7 +76,7 @@ export interface UserDocumentType extends Document {
     isAuth: boolean,
     authKey: String,
     authKeyExpired: Date,
-    authDate: mongoose.Schema.Types.Date
+    authDate: Date
   },
   subscription591: Array<mongoose.Schema.Types.ObjectId>
 }
@@ -84,5 +87,6 @@ export enum UserSexEnum {
 }
 
 export type UserModel = Model<UserDocumentType> & {
-  createSeed: () => Promise<void>
+  findByLineId: (lineId: string) => Promise<UserDocumentType>
+  findHoursPushTargets: () => Promise<UserDocumentType[]>
 }

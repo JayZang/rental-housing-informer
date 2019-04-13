@@ -20,7 +20,7 @@ export default router
 // 每小時定時搜尋的路由，由 Google App Script 觸發
 async function routeHours(req: Request, res: Response) {
   const promises: Promise<any>[] = []
-  const users = await User.find().populate({path: 'subscription591', option: {limit: 1}}).exec()
+  const users = await User.findHoursPushTargets()
   users.forEach((user: UserDocumentType) => {
     const promise = new Promise(async (resolve, reject) => {
       // 判斷有無訂閱

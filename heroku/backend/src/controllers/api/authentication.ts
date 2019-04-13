@@ -18,17 +18,24 @@ export default router
 // 確認該用戶是否需要被認證
 async function checkIfNeedAuth(req: Request, res: Response) {
   const userId = req.params.userId
+  const isValidId = mongoose.Types.ObjectId.isValid(userId)
 
-  try {
-    const user = await User.findById(userId)
-
-    if (!user || user.authInform.isAuth)
-      return res.status(404).send()
-  } catch {
+  if (!isValidId) {
     return res.status(404).send()
   }
 
-  return res.send()
+  const user = await User.findById(userId)
+  if (!user || user.authInform.isAuth) {
+    return res.status(404).send()
+  }
+
+  const now = new Date()
+  const authKeyExpired = user.authInform.authKeyExpired
+  const authKey = authKeyExpired && now < authKeyExpired ? user.authInform.authKey : undefined
+
+  return res.send({
+    authKey
+  })
 }
 
 // 用戶註冊，成功時返回 Line 指定回復碼
@@ -97,8 +104,9 @@ async function handleAuthentication(req: Request, res: Response) {
   const sha256 = crypto.createHash('sha256')
   const now = new Date()
   const hash = sha256.update(`${userId}.${now.valueOf()}`).digest('hex')
+  const authKey = `auth-key=${hash}`
 
-  user.authInform.authKey = `auth-key=${hash}`
+  user.authInform.authKey = authKey
   user.authInform.authKeyExpired = new Date(now.valueOf() + AUTH_VALID_KEY_DURATION)
   user.account = req.body.account
   user.email = req.body.email
@@ -119,6 +127,6 @@ async function handleAuthentication(req: Request, res: Response) {
 
   res.json({
     result: true,
-    authKey: hash
+    authKey
   })
 }
