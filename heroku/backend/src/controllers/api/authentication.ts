@@ -1,16 +1,24 @@
 import express, { Request, Response } from 'express'
 import crypto from 'crypto'
 import mongoose from 'mongoose'
+import jwt from 'jsonwebtoken'
 import User, { UserSexEnum } from '../../models/User'
+import appConfig from '../../config/appServer'
 
 const router = express.Router()
 const AUTH_VALID_KEY_DURATION = 3 * 60 * 60 * 1000
+
+// 驗證用戶所夾帶之 login token 是否過期
+router.get('/authentication/login-token', handleLoginTokenCert)
 
 // 確認該用戶是否需要被認證
 router.get('/authentication/:userId', checkIfNeedAuth)
 
 // 用戶註冊，成功時返回 Line 指定回復碼
 router.post('/authentication/:userId', handleAuthentication)
+
+// 用戶登入
+router.post('/login', handleLogin)
 
 export default router
 
@@ -129,4 +137,52 @@ async function handleAuthentication(req: Request, res: Response) {
     result: true,
     authKey
   })
+}
+
+// 用戶登入
+async function handleLogin(req: Request, res: Response) {
+  req.checkBody('account', '帳號 不能空白').notEmpty()
+  req.checkBody('password', '密碼 不能空白').notEmpty()
+
+  const errors = req.validationErrors(true)
+
+  if (errors) {
+    return res.send({
+      result: false,
+      errFields: errors
+    })
+  }
+
+  const account = req.body.account
+  const password = req.body.password
+  const user = await User.findByAccountAndPassword(account, password)
+
+  if (!user) {
+    return res.send({
+      result: false,
+      errFields: errors,
+      errMsg: '帳號或密碼錯誤'
+    })
+  }
+
+  const partialUserInfo = {
+    id: user._id,
+    nickName: user.nickName
+  }
+  const jwtSecret = appConfig.jwtSecret
+  const token = jwt.sign(partialUserInfo, jwtSecret, {expiresIn: '3h'})
+
+  res.send({
+    result: true,
+    user: partialUserInfo,
+    token
+  })
+}
+
+// 驗證用戶所夾帶之 login token 是否過期
+async function handleLoginTokenCert(req: Request, res: Response) {
+  if (req.user)
+    res.json({ result: true })
+  else
+    res.json({ result: false })
 }

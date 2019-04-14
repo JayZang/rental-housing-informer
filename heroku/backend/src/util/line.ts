@@ -45,9 +45,9 @@ function checkTextInstruction(text: string): string {
 
   for (let i = 0; i < instructionNames.length; i ++) {
     const instructionName = instructionNames[i]
-    const instructionKey = TextMessageInstructions[instructionName]
-    const textIndex = text.indexOf(instructionKey)
-    if (textIndex === 0) return instructionKey
+    const instructionKey: string = TextMessageInstructions[instructionName]
+    const textSliced = text.slice(0, instructionKey.length)
+    if (textSliced === instructionKey) return instructionKey
   }
 
   return ''

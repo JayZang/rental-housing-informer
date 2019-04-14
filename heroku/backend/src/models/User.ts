@@ -50,6 +50,20 @@ UserSchema.statics.findHoursPushTargets = async function (): Promise<UserDocumen
   }).populate({ path: 'subscription591', option: { limit: 1 } }).exec()
 }
 
+UserSchema.statics.findByAccountAndPassword = async function (account: string, password: string): Promise<UserDocumentType> {
+  const Users: UserModel = this
+  const user = await Users.findOne({ account })
+
+  if (!user) return undefined
+
+  const hashedPassword = user.password
+  const result = bcryptjs.compareSync(password, hashedPassword)
+
+  if (!result) return undefined
+
+  return user
+}
+
 UserSchema.pre<UserDocumentType>('save', function(next) {
   const user = this
   if (!user.isModified('password')) return next()
@@ -89,4 +103,5 @@ export enum UserSexEnum {
 export type UserModel = Model<UserDocumentType> & {
   findByLineId: (lineId: string) => Promise<UserDocumentType>
   findHoursPushTargets: () => Promise<UserDocumentType[]>
+  findByAccountAndPassword: (account: string, password: string) => Promise<UserDocumentType>
 }

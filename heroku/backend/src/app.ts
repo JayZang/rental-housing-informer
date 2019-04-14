@@ -24,6 +24,9 @@ app.use(bodyParser.urlencoded({ extended: true }))
 app.use(expressValidator())
 app.use(express.static(path.join(__dirname, '../public'), { maxAge: 31557600000 }))
 
+import loginTokenToUserMiddleware from './middlewares/loginTokenToUser'
+app.use(loginTokenToUserMiddleware)
+
 // Router Setting
 import apiRouter from './controllers/api'
 import router591 from './controllers/591'
@@ -34,9 +37,13 @@ app.use('/api/', apiRouter)
 app.use('/591/', router591)
 app.use('/line/', lineRouter)
 app.use('/google-script-trigger/', googleScriptRouter)
-app.use('*', (req, res) => {
-  const html = fs.readFileSync(path.resolve(__dirname, '../public/index.html'), 'utf-8')
-  res.send(html)
+app.use('*', (req, res, next) => {
+  try {
+    const html = fs.readFileSync(path.resolve(__dirname, '../public/index.html'), 'utf-8')
+    res.send(html)
+  } catch {
+    next()
+  }
 })
 
 export default app
