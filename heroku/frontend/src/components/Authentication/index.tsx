@@ -165,7 +165,9 @@ class Authentication extends Component<AuthenticationProps, AuthenticationState>
                 </div>
                 <button type="button" 
                   className="auth-submit-btn btn btn-primary" 
-                  onClick={this.handleAuthSubmitBtnClick}>送出</button>
+                  onClick={this.handleAuthSubmitBtnClick}>
+                  送出
+                </button>
               </div>
             }
           </div>

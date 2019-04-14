@@ -1,7 +1,9 @@
 import axios, { AxiosPromise, AxiosError } from 'axios'
 import {
   SignUpRequestData,
-  SignUpResponseData
+  SignUpResponseData,
+  LoginResponseData,
+  certLoginTokenResponseData
 } from './types'
 
 /**
@@ -28,5 +30,28 @@ export async function checkIfNeedAuth(userId: string): Promise<string> {
  */
 export async function signUpUser(userId: string, data: SignUpRequestData): Promise<SignUpResponseData> {
   const res = await axios.post(`/api/authentication/${userId}`, data)
+  return res.data
+}
+
+/**
+ * 登入用戶
+ * @param account 
+ * @param password 
+ */
+export async function login(param: { account: string, password: string }): Promise<LoginResponseData> {
+  const res = await axios.post('/api/login', param)
+  return res.data
+}
+
+/**
+ * 驗證 token 是否還是有效為登入狀態
+ * @param token 
+ */
+export async function certLoginToken(token: string): Promise<certLoginTokenResponseData> {
+  const res = await axios.get('/api/authentication/login-token', { 
+    headers: {
+      'X-Auth': token
+    }
+  })
   return res.data
 }

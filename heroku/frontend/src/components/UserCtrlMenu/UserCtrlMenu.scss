@@ -1,0 +1,21 @@
+#user-ctrl-menu {
+  display: flex;
+  padding: 0 10px;
+  user-select: none;
+
+  .user-default-container {
+    display: flex;
+    align-items: center;
+    font-weight: bold;
+    cursor: pointer;
+
+    > .fa-user {
+      margin-right: 5px;
+    }
+
+    .user-default-text {
+      font-size: 16px;
+      padding-top: 1px;
+    }
+  }
+}

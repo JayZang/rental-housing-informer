@@ -8,12 +8,12 @@ export type SignUpRequestData = {
   sex: string
 }
 
-type SignUpResponseSuccessData = {
+type SignUpSuccessResponseData = {
   result: true
   authKey: string
 }
 
-type SignUpResponseFailData = {
+type SignUpFailResponseData = {
   result: false,
   errFields: {
     [key: string]: {
@@ -25,4 +25,31 @@ type SignUpResponseFailData = {
   }
 }
 
-export type SignUpResponseData = SignUpResponseFailData | SignUpResponseSuccessData
+export type SignUpResponseData = SignUpSuccessResponseData | SignUpFailResponseData
+
+
+type LoginSuccessResponseData = {
+  result: true,
+  token: string
+  user: {
+    id: string,
+    nickname: string
+  }
+}
+
+type LoginFailResponseData = {
+  result: false,
+  errFields: {
+    [key: string]: {
+      location: string
+      msg: string
+      param: string
+      value: string
+    }
+  },
+  errMsg?: string
+}
+
+export type LoginResponseData = LoginSuccessResponseData | LoginFailResponseData
+
+export type certLoginTokenResponseData = LoginSuccessResponseData | undefined

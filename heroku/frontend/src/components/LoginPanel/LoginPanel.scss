@@ -1,0 +1,49 @@
+#login-panel {
+  max-width: 600px;
+  margin: 0 auto;
+  background-color: white;
+  min-height: 300px;
+  box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.6);
+  padding: 30px 50px;
+  box-sizing: border-box;
+
+  .login-panel-title {
+    font-size: 22px;
+    font-weight: bold;
+
+    > .fa-user {
+      margin-right: 10px;
+    }
+  }
+
+  .title-separator-hr {
+    margin: 15px 0 25px;
+  }
+
+  .login-panel-form-item {
+    margin-bottom: 15px;
+
+    .login-panel-form-item-error-hint {
+      margin-bottom: 0px;
+      font-weight: bold;
+      font-size: 12px;
+    }
+
+    input.error {
+      border-color: red;
+      box-shadow: 0 0 0 0.2rem rgba(255, 0, 0, 0.25);
+    }
+  }
+
+  .login-submit-btn  {
+    width: 100%;
+    font-weight: bold;
+  }
+}
+
+@media(max-width: 600px) {
+  #login-panel {
+    margin: 0 20px;
+    padding: 30px 30px;
+  }
+}
