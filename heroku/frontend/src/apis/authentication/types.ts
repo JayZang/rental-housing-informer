@@ -33,7 +33,7 @@ type LoginSuccessResponseData = {
   token: string
   user: {
     id: string,
-    nickname: string
+    nickName: string
   }
 }
 

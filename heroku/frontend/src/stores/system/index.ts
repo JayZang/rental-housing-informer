@@ -14,7 +14,7 @@ export async function login(account: string, password: string) {
 
     dispatch(updateLoginStatus({
       userId: data.user.id,
-      userNickname: data.user.nickname,
+      userNickname: data.user.nickName,
       loginToken
     }))
   }
@@ -41,7 +41,7 @@ export async function certLoginToken() {
 
   dispatch(updateLoginStatus({
     userId: data.user.id,
-    userNickname: data.user.nickname,
+    userNickname: data.user.nickName,
     loginToken
   }))
 }

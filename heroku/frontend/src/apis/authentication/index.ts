@@ -27,6 +27,7 @@ export async function checkIfNeedAuth(userId: string): Promise<string> {
  * 註冊用戶
  * @param userId 
  * @param data 
+ * @param data 
  */
 export async function signUpUser(userId: string, data: SignUpRequestData): Promise<SignUpResponseData> {
   const res = await axios.post(`/api/authentication/${userId}`, data)

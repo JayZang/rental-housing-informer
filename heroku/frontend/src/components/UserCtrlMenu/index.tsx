@@ -30,8 +30,15 @@ class UserCtrlMenu extends Component<UserCtrlMenuProps> {
   }
 
   renderLoggedIn() {
+    console.log(this.props)
     return (
-      <div>123</div>
+      <div className="user-logged-in-container">
+        <div className="user-cover-container">
+          <div className="cover-content">
+            {this.props.userNickname}
+          </div>
+        </div>
+      </div>
     )
   }
 }

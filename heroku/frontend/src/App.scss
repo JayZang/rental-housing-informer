@@ -1,8 +1,32 @@
 #app {
   padding-top: 45px;
 
+  .loading-animation {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .app-top-nav-bar {
+    position: fixed;
+    width: 100%;
+    top: 0;
+    animation: app-top-nav-bar-show 1s;
+  }
+
   .app-content {
     max-width: 1200px;
     margin: 50px auto;
+  }
+}
+
+@keyframes app-top-nav-bar-show {
+  from {
+    transform: translateY(-100%);
+  }
+
+  to {
+    transform: translateY(0);
   }
 }
