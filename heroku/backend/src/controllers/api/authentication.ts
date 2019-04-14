@@ -181,8 +181,20 @@ async function handleLogin(req: Request, res: Response) {
 
 // 驗證用戶所夾帶之 login token 是否過期
 async function handleLoginTokenCert(req: Request, res: Response) {
-  if (req.user)
-    res.json({ result: true })
-  else
-    res.json({ result: false })
+  const user = req.user
+  if (!user)
+    return res.send()
+
+  const partialUserInfo = {
+    id: user.id,
+    nickName: user.nickName
+  }
+  const jwtSecret = appConfig.jwtSecret
+  const token = jwt.sign(partialUserInfo, jwtSecret, { expiresIn: '3h' })
+
+  res.json({
+    result: true,
+    user: req.user,
+    token
+  })
 }
