@@ -242,11 +242,11 @@ class Authentication extends Component<AuthenticationProps, AuthenticationState>
   async handleAuthSubmitBtnClick(event: MouseEvent<HTMLButtonElement>) {
     const userId = this.props.match.params.userId
     const state = this.state
-    const sigUPPromise = signUpUser(userId, state)
 
     this.setState({isLoaded: false})
+    const sigUpPromise = signUpUser(userId, state)
     const timeoutPromise = new Promise(resolve => setTimeout(() => resolve(), 1500))
-    const [res] = await Promise.all([sigUPPromise, timeoutPromise])
+    const [res] = await Promise.all([sigUpPromise, timeoutPromise])
     this.setState({ isLoaded: true })
 
     if (!res.result) {
