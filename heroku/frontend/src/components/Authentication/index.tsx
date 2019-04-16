@@ -1,6 +1,7 @@
 import React, { Component, ChangeEvent, MouseEvent } from 'react'
 import { RouteComponentProps, Redirect } from 'react-router-dom'
 import AuthSuccessPanel from './AuthSuccessPanel'
+import LoadingAnimation from '../LoadingAnimation'
 import './Authentication.scss'
 import { checkIfNeedAuth, signUpUser } from '../../apis'
 
@@ -75,9 +76,7 @@ class Authentication extends Component<AuthenticationProps, AuthenticationState>
   }
 
   render() {
-    if (!this.state.isLoaded)
-      return null
-    else if (!this.state.isNeedAuth)
+    if (this.state.isLoaded && !this.state.isNeedAuth)
       return <Redirect to="/" />
     else
       return (
@@ -87,92 +86,110 @@ class Authentication extends Component<AuthenticationProps, AuthenticationState>
             <span>用戶註冊及認證</span>
           </div>
           <hr className="title-separator-hr" />
-          <div className="authentication-content">
-            {this.state.authKey ? 
-              <AuthSuccessPanel authKey={this.state.authKey} />  : 
-              <div className="authentication-form-container">
-                <div className="authentication-form-item">
-                  <div className="authentication-form-item-error-hint">
-                    {this.state.fieldErrMsg.account ? this.state.fieldErrMsg.account : ''}
-                  </div>
-                  <input type="text"
-                    className={`account form-control ${this.state.fieldErrMsg.account && 'error'}`}
-                    placeholder="帳號"
-                    title="帳號"
-                    value={this.state.account}
-                    onChange={this.handleAccountFieldChange} />
-                </div>
-                <div className="authentication-form-item">
-                  <div className="authentication-form-item-error-hint">
-                    {this.state.fieldErrMsg.email ? this.state.fieldErrMsg.email : ''}
-                  </div>
-                  <input type="text" 
-                    className={`email form-control ${this.state.fieldErrMsg.email && 'error'}`}
-                    placeholder="Email" 
-                    title="Email" 
-                    value={this.state.email} 
-                    onChange={this.handleEmailFieldChange}/>
-                </div>
-                <div className="authentication-form-item">
-                  <div className="authentication-form-item-error-hint">
-                    {this.state.fieldErrMsg.password ? this.state.fieldErrMsg.password : ''}
-                  </div>
-                  <input type="password" 
-                    className={`password form-control ${this.state.fieldErrMsg.password && 'error'}`}
-                    placeholder="密碼" 
-                    title="密碼" 
-                    value={this.state.password} 
-                    onChange={this.handlePasswordFieldChange}/>
-                </div>
-                <div className="authentication-form-item">
-                  <div className="authentication-form-item-error-hint">
-                    {this.state.fieldErrMsg.passwordConfirm ? this.state.fieldErrMsg.passwordConfirm : ''}
-                  </div>
-                  <input type="password" 
-                    className={`password-confirm form-control ${this.state.fieldErrMsg.passwordConfirm && 'error'}`}
-                    placeholder="再次輸入密碼" 
-                    title="再次輸入密碼" 
-                    value={this.state.passwordConfirm} 
-                    onChange={this.handlePasswordConfirmFieldChange}/>
-                </div>
-                <div className="authentication-form-item">
-                  <div className="authentication-form-item-error-hint">
-                    {this.state.fieldErrMsg.fullName ? this.state.fieldErrMsg.fullName : ''}
-                  </div>
-                  <input type="text"
-                    className={`full-name form-control ${this.state.fieldErrMsg.fullName && 'error'}`}
-                    placeholder="真實姓名"
-                    title="真實姓名"
-                    value={this.state.fullName}
-                    onChange={this.handleFullNameFieldChange} />
-                </div>
-                <div className="authentication-form-item">
-                  <div className="authentication-form-item-error-hint">
-                    {this.state.fieldErrMsg.nickName ? this.state.fieldErrMsg.nickName : ''}
-                  </div>
-                  <input type="text" 
-                    className={`nick-name form-control ${this.state.fieldErrMsg.nickName && 'error'}`}
-                    placeholder="暱稱" 
-                    title="暱稱" 
-                    value={this.state.nickName} 
-                    onChange={this.handleNickNameFieldChange}/>
-                </div>
-                <div className="authentication-form-item">
-                  <select className="sex custom-select" value={this.state.sex} onChange={this.handleSexFieldChange}>
-                    <option value="0">男</option>
-                    <option value="1">女</option>
-                  </select>
-                </div>
-                <button type="button" 
-                  className="auth-submit-btn btn btn-primary" 
-                  onClick={this.handleAuthSubmitBtnClick}>
-                  送出
-                </button>
-              </div>
-            }
-          </div>
+          {
+            !this.state.isLoaded ? 
+              this.renderLoadingAnimation() :
+              this.renderAuthForm()
+          }         
         </div>
       )
+  }
+
+  renderLoadingAnimation() {
+    return (
+      <div className="auth-loading-container">
+        <LoadingAnimation />
+      </div>
+    )
+  }
+
+  renderAuthForm() {
+    return (
+      <div className="authentication-content">
+        {this.state.authKey ?
+          <AuthSuccessPanel authKey={this.state.authKey} /> :
+          <div className="authentication-form-container">
+            <div className="authentication-form-item">
+              <div className="authentication-form-item-error-hint">
+                {this.state.fieldErrMsg.account ? this.state.fieldErrMsg.account : ''}
+              </div>
+              <input type="text"
+                className={`account form-control ${this.state.fieldErrMsg.account && 'error'}`}
+                placeholder="帳號"
+                title="帳號"
+                value={this.state.account}
+                onChange={this.handleAccountFieldChange} />
+            </div>
+            <div className="authentication-form-item">
+              <div className="authentication-form-item-error-hint">
+                {this.state.fieldErrMsg.email ? this.state.fieldErrMsg.email : ''}
+              </div>
+              <input type="text"
+                className={`email form-control ${this.state.fieldErrMsg.email && 'error'}`}
+                placeholder="Email"
+                title="Email"
+                value={this.state.email}
+                onChange={this.handleEmailFieldChange} />
+            </div>
+            <div className="authentication-form-item">
+              <div className="authentication-form-item-error-hint">
+                {this.state.fieldErrMsg.password ? this.state.fieldErrMsg.password : ''}
+              </div>
+              <input type="password"
+                className={`password form-control ${this.state.fieldErrMsg.password && 'error'}`}
+                placeholder="密碼"
+                title="密碼"
+                value={this.state.password}
+                onChange={this.handlePasswordFieldChange} />
+            </div>
+            <div className="authentication-form-item">
+              <div className="authentication-form-item-error-hint">
+                {this.state.fieldErrMsg.passwordConfirm ? this.state.fieldErrMsg.passwordConfirm : ''}
+              </div>
+              <input type="password"
+                className={`password-confirm form-control ${this.state.fieldErrMsg.passwordConfirm && 'error'}`}
+                placeholder="再次輸入密碼"
+                title="再次輸入密碼"
+                value={this.state.passwordConfirm}
+                onChange={this.handlePasswordConfirmFieldChange} />
+            </div>
+            <div className="authentication-form-item">
+              <div className="authentication-form-item-error-hint">
+                {this.state.fieldErrMsg.fullName ? this.state.fieldErrMsg.fullName : ''}
+              </div>
+              <input type="text"
+                className={`full-name form-control ${this.state.fieldErrMsg.fullName && 'error'}`}
+                placeholder="真實姓名"
+                title="真實姓名"
+                value={this.state.fullName}
+                onChange={this.handleFullNameFieldChange} />
+            </div>
+            <div className="authentication-form-item">
+              <div className="authentication-form-item-error-hint">
+                {this.state.fieldErrMsg.nickName ? this.state.fieldErrMsg.nickName : ''}
+              </div>
+              <input type="text"
+                className={`nick-name form-control ${this.state.fieldErrMsg.nickName && 'error'}`}
+                placeholder="暱稱"
+                title="暱稱"
+                value={this.state.nickName}
+                onChange={this.handleNickNameFieldChange} />
+            </div>
+            <div className="authentication-form-item">
+              <select className="sex custom-select" value={this.state.sex} onChange={this.handleSexFieldChange}>
+                <option value="0">男</option>
+                <option value="1">女</option>
+              </select>
+            </div>
+            <button type="button"
+              className="auth-submit-btn btn btn-primary"
+              onClick={this.handleAuthSubmitBtnClick}>
+              送出
+                </button>
+          </div>
+        }
+      </div>
+    )
   }
 
   handleAccountFieldChange(event: ChangeEvent<HTMLInputElement>) {
@@ -225,7 +242,12 @@ class Authentication extends Component<AuthenticationProps, AuthenticationState>
   async handleAuthSubmitBtnClick(event: MouseEvent<HTMLButtonElement>) {
     const userId = this.props.match.params.userId
     const state = this.state
-    const res = await signUpUser(userId, state)
+    const sigUPPromise = signUpUser(userId, state)
+
+    this.setState({isLoaded: false})
+    const timeoutPromise = new Promise(resolve => setTimeout(() => resolve(), 1500))
+    const [res] = await Promise.all([sigUPPromise, timeoutPromise])
+    this.setState({ isLoaded: true })
 
     if (!res.result) {
       let fieldErrMsg = state.fieldErrMsg

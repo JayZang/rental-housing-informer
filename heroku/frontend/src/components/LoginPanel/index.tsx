@@ -2,6 +2,7 @@ import React, { Component, ChangeEvent } from 'react'
 import { Redirect } from 'react-router-dom'
 import { connect } from 'react-redux'
 import './LoginPanel.scss'
+import LoadingAnimation from '../LoadingAnimation'
 import * as systemStore from '../../stores/system'
 import { RootState } from '../../stores'
 
@@ -20,6 +21,7 @@ interface LoginPanelStates {
     [key: string]: string
   },
   errMsg: string
+  isLogging: boolean
 }
 
 class LoginPanel extends Component<LoginPanelProps, LoginPanelStates> {
@@ -39,7 +41,8 @@ class LoginPanel extends Component<LoginPanelProps, LoginPanelStates> {
         account: '',
         password: ''
       },
-      errMsg: ''
+      errMsg: '',
+      isLogging: false
     }
   }
 
@@ -54,42 +57,52 @@ class LoginPanel extends Component<LoginPanelProps, LoginPanelStates> {
           <span>用戶登入</span>
         </div>
         <hr className="title-separator-hr" />
-        <div className="login-panel-content">
-          {
-            !!this.state.errMsg && 
-            <div className="alert alert-danger" role="alert">
-              {this.state.errMsg}
-            </div>
-          }
-          <div className="login-panel-form-container">
-            <div className="login-panel-form-item">
-              <div className="login-panel-form-item-error-hint">
-                {this.state.fieldErrMsg.account ? this.state.fieldErrMsg.account : ''}
-              </div>
-              <input type="text"
-                className={`account form-control ${this.state.fieldErrMsg.account && 'error'}`}
-                placeholder="帳號"
-                title="帳號"
-                value={this.state.formField.account}
-                onChange={this.handleAccountFieldChange} />
-            </div>
-            <div className="login-panel-form-item">
-              <div className="login-panel-form-item-error-hint">
-                {this.state.fieldErrMsg.password ? this.state.fieldErrMsg.password : ''}
-              </div>
-              <input type="password"
-                className={`password form-control ${this.state.fieldErrMsg.password && 'error'}`}
-                placeholder="密碼"
-                title="密碼"
-                value={this.state.formField.password}
-                onChange={this.handlePasswordFieldChange} />
-            </div>
-            <button type="button"
-              className="login-submit-btn btn btn-primary"
-              onClick={this.handleLoginSubmitBtnClick}>
-              登入
-            </button>
+        {
+          this.state.isLogging ?
+            <LoadingAnimation/> :
+            this.renderLoginForm()
+        }
+      </div>
+    )
+  }
+
+  renderLoginForm() {
+    return (
+      <div className="login-panel-content">
+        {
+          !!this.state.errMsg &&
+          <div className="alert alert-danger" role="alert">
+            {this.state.errMsg}
           </div>
+        }
+        <div className="login-panel-form-container">
+          <div className="login-panel-form-item">
+            <div className="login-panel-form-item-error-hint">
+              {this.state.fieldErrMsg.account ? this.state.fieldErrMsg.account : ''}
+            </div>
+            <input type="text"
+              className={`account form-control ${this.state.fieldErrMsg.account && 'error'}`}
+              placeholder="帳號"
+              title="帳號"
+              value={this.state.formField.account}
+              onChange={this.handleAccountFieldChange} />
+          </div>
+          <div className="login-panel-form-item">
+            <div className="login-panel-form-item-error-hint">
+              {this.state.fieldErrMsg.password ? this.state.fieldErrMsg.password : ''}
+            </div>
+            <input type="password"
+              className={`password form-control ${this.state.fieldErrMsg.password && 'error'}`}
+              placeholder="密碼"
+              title="密碼"
+              value={this.state.formField.password}
+              onChange={this.handlePasswordFieldChange} />
+          </div>
+          <button type="button"
+            className="login-submit-btn btn btn-primary"
+            onClick={this.handleLoginSubmitBtnClick}>
+            登入
+            </button>
         </div>
       </div>
     )
@@ -114,7 +127,13 @@ class LoginPanel extends Component<LoginPanelProps, LoginPanelStates> {
   async handleLoginSubmitBtnClick() {
     const account = this.state.formField.account
     const password = this.state.formField.password
-    const res = await systemStore.login(account, password)
+
+    this.setState({ isLogging: true })
+    const loginPromise = systemStore.login(account, password)
+    const timeoutPromise = new Promise(resolve => setTimeout(() => resolve(), 1500))
+    const [res] = await Promise.all([loginPromise, timeoutPromise])
+    this.setState({ isLogging: false })
+
     if (!res.result) {
       const errMsg = res.errMsg || ''
       let fieldErrMsg = this.state.fieldErrMsg

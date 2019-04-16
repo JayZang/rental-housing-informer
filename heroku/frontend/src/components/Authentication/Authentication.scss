@@ -6,6 +6,8 @@
   box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.6);
   padding: 30px 50px;
   box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
 
   .authentication-title {
     font-size: 22px;
@@ -18,6 +20,12 @@
 
   .title-separator-hr {
     margin: 15px 0 25px;
+  }
+
+  .auth-loading-container {
+    flex: 1;
+    display: flex;
+    align-items: center;
   }
 
   .authentication-form-item {
