@@ -1,5 +1,5 @@
 import express, { Request, Response } from 'express'
-import util591 from '../util/591'
+import service591 from '../services/591Service'
 import User from '../models/User'
 import Subscription591 from '../models/RentalSubscriptionRecord591'
 
@@ -13,9 +13,13 @@ export default router
 // 新增 591 訂閱
 async function newSubscription(req: Request, res: Response) {
   req.checkBody('title', 'title 屬性為必要欄位').notEmpty()
-  req.checkBody('queryString', 'queryString 屬性為必要欄位').notEmpty()
+  req.checkBody('queryString')
+    .notEmpty().withMessage('queryString 屬性為必要欄位')
+    .isURL().withMessage('queryString 必須為 URL 格式')
+    .isURL({ require_host: true, host_whitelist: ['rent.591.com.tw'] }).withMessage('queryString 錯誤 URL Host 名稱')
+    .contains('region=').withMessage('queryString 確認有 "region"欄位')
 
-  const err = req.validationErrors()
+  const err = req.validationErrors(true)
 
   if (err) {
     return res.json({
@@ -23,13 +27,11 @@ async function newSubscription(req: Request, res: Response) {
     })
   }
 
-  const {
-    title,
-    queryString
-  } = req.body
-  const userId = '5caab907c9fabc38a03ea14e'
+  const queryString = req.body.queryString.split('?')[1]
+  const title = req.body.title
+  const userId = '5ca9cb456f33bc08c40a923c'
   const user = await User.findById(userId)
-  const rentals = await util591.getRentalByQueryString(queryString)
+  const rentals = await service591.getRentalByQueryString(queryString)
   const subscription591 = new Subscription591({
     userId,
     title,
