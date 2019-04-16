@@ -4,7 +4,7 @@ import {
   FlexBubble,
   TemplateMessage
 } from '@line/bot-sdk'
-import { RentalData } from './591'
+import { RentalData } from '../services/591Service'
 import appConfig from '../config/appServer'
 import lineConfig from '../config/line'
 
