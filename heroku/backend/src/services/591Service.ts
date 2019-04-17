@@ -49,10 +49,11 @@ async function getAllRentalHouse(): Promise<RentalApiResponseSchema591> {
 async function getRentalByQueryString(query: string): Promise<RentalData[]> {
   let rentalData: RentalData[] = []
   let rawData = await getRawDataByQueryString(query)
-  const recordCount = parseInt(rawData.records)
+  const recordCount = parseInt(rawData.records.split(',').join(''))
 
   rentalData = rentalData.concat(rawData.data.data)
-  for (let firstRow = 30; recordCount > 30 && firstRow <= 60; firstRow += 30) {
+  for (let firstRow = 30; recordCount > 30 && firstRow <= 30; firstRow += 30) {
+
     rawData = await getRawDataByQueryString(query, firstRow)
     rentalData = rentalData.concat(rawData.data.data)
   }
@@ -68,9 +69,9 @@ async function checkVariableValid() {
     (now.valueOf() - dateFromLastToken.valueOf() < validDuration) : false
 
   if (!CSRF_Token ||
-      !new_591_session ||
-      !dateFromLastToken ||
-      !isValidDuration) {
+    !new_591_session ||
+    !dateFromLastToken ||
+    !isValidDuration) {
     await init()
   }
 }
@@ -91,13 +92,14 @@ function getSessionKeyFromResponse(res: AxiosResponse) {
 async function getRawDataByQueryString(query: string, firstRow?: number): Promise<RentalApiResponseSchema591> {
   await checkVariableValid()
 
+  const region = query.split('&').filter(param => param.split('=')[0] === 'region')[0].split('=')[1]
   const res = await axios({
     method: 'GET',
     url: `${apiURL}?${query}${firstRow ? `&firstRow=${firstRow}` : ''}`,
     responseType: 'json',
     headers: {
       'X-CSRF-TOKEN': CSRF_Token,
-      'Cookie': `591_new_session=${new_591_session};`
+      'Cookie': `591_new_session=${new_591_session}; urlJumpIp=${region}`
     }
   })
 

@@ -1,7 +1,7 @@
 import express, { Request, Response, NextFunction } from 'express'
 import _ from 'lodash'
 import { Client } from '@line/bot-sdk'
-import util591 from '../util/591'
+import service591 from '../services/591Service'
 import lineUtil from '../util/line'
 import lineConfig from '../config/line'
 import appConfig from '../config/appServer'
@@ -29,7 +29,7 @@ async function routeHours(req: Request, res: Response) {
       const subscription591 = <SubscriptionRecordDocumentType><any>user.subscription591[0]
       const queryString = subscription591.queryString
       const lineId = user.lineId
-      const rentalData = await util591.getRentalByQueryString(queryString)
+      const rentalData = await service591.getRentalByQueryString(queryString)
 
       // 取得未於已讀記錄中的租屋資訊，最多拿10筆顯示於 line 上
       const unReadRental = rentalData
