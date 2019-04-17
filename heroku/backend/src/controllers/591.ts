@@ -31,7 +31,7 @@ async function newSubscription(req: Request, res: Response) {
   const title = req.body.title
   const userId = '5ca9cb456f33bc08c40a923c'
   const user = await User.findById(userId)
-  const rentals = await service591.getRentalByQueryString(queryString)
+  const rentals = await service591.getRentals(queryString)
   const subscription591 = new Subscription591({
     userId,
     title,

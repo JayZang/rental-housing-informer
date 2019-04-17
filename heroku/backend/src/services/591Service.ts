@@ -1,17 +1,17 @@
-import axios, { AxiosResponse } from 'axios'
+import axios, { AxiosResponse, AxiosError } from 'axios'
 import cheerio from 'cheerio'
 import config591 from '../config/591'
 
 const homeURL = config591.homeURL
 const apiURL = config591.apiURL
+const MAX_RENTAL_COUNT = 60
 let dateFromLastToken: Date = undefined
 let CSRF_Token: String = undefined
 let new_591_session: String = undefined
 
 export default {
   init,
-  getAllRentalHouse,
-  getRentalByQueryString
+  getRentals
 }
 
 // 初始 591，造訪頁面取得相關 TOKEN 及 Session
@@ -23,61 +23,7 @@ async function init() {
   CSRF_Token = target.attr('content')
   dateFromLastToken = new Date()
 
-  getSessionKeyFromResponse(res)
-}
-
-// 取得所有租屋資訊
-async function getAllRentalHouse(): Promise<RentalApiResponseSchema591> {
-  await checkVariableValid()
-
-  const res = await axios({
-    method: 'GET',
-    url: apiURL,
-    responseType: 'json',
-    headers: {
-      'X-CSRF-TOKEN': CSRF_Token,
-      'Cookie': `591_new_session=${new_591_session};`
-    }
-  })
-
-  getSessionKeyFromResponse(res)
-
-  return res.data
-}
-
-// 利用 URL 參數取得租屋資料，最多90筆
-async function getRentalByQueryString(query: string): Promise<RentalData[]> {
-  let rentalData: RentalData[] = []
-  let rawData = await getRawDataByQueryString(query)
-  const recordCount = parseInt(rawData.records.split(',').join(''))
-
-  rentalData = rentalData.concat(rawData.data.data)
-  for (let firstRow = 30; recordCount > 30 && firstRow <= 30; firstRow += 30) {
-
-    rawData = await getRawDataByQueryString(query, firstRow)
-    rentalData = rentalData.concat(rawData.data.data)
-  }
-
-  return rentalData
-}
-
-// 確認 Token, Session 及有效期限是否為有效的，否則執行 init 函數
-async function checkVariableValid() {
-  const now = new Date()
-  const validDuration = 60 * 60 * 1000
-  const isValidDuration = dateFromLastToken ?
-    (now.valueOf() - dateFromLastToken.valueOf() < validDuration) : false
-
-  if (!CSRF_Token ||
-    !new_591_session ||
-    !dateFromLastToken ||
-    !isValidDuration) {
-    await init()
-  }
-}
-
-// 從 Home 頁面或者 API 請求回復裡取得特定 Session
-function getSessionKeyFromResponse(res: AxiosResponse) {
+  // 取得 591_new_session
   const setCookies = res.headers['set-cookie']
   setCookies.forEach((item: String) => {
     if (!item.includes('591_new_session'))
@@ -88,24 +34,87 @@ function getSessionKeyFromResponse(res: AxiosResponse) {
   })
 }
 
-// 給予 URL 參數及從第幾筆數搜尋
-async function getRawDataByQueryString(query: string, firstRow?: number): Promise<RentalApiResponseSchema591> {
+// 利用 URL 參數取得租屋資料，最多60筆
+async function getRentals(query: string, maxCount?: number): Promise<RentalData[]> {
+  let rentalData: RentalData[] = []
+  let rawData = await getRawDataByQueryString(query)
+  if (!rawData) return []
+
+  const recordCount = parseInt(rawData.records.split(',').join(''))
+  const maxDataCount = maxCount || MAX_RENTAL_COUNT
+
+  rentalData = rentalData.concat(rawData.data.data)
+  for (let firstRow = 30; recordCount > 30 && firstRow < maxDataCount; firstRow += 30) {
+    rawData = await getRawDataByQueryString(query, firstRow)
+    if (!rawData) return []
+
+    rentalData = rentalData.concat(rawData.data.data)
+  }
+
+  return rentalData
+}
+
+// 向 591 API 請求取得指定起始筆數後的租屋資料
+async function getRawDataByQueryString(query: string, firstRow?: number): Promise<RentalApiResponseSchema591 | undefined> {
+  // 初始或檢查 TOKEN 及 SESSION 是否已存在
   await checkVariableValid()
 
+  query = `${query}${firstRow ? `&firstRow=${firstRow}` : ''}`
+  let res = undefined
+
+  try {
+    res = await request591api(query)
+  } catch {
+    console.log(`CSRF_Token: ${CSRF_Token}`)
+    console.log(`new_591_session: ${new_591_session}`)
+
+    // 假若回傳 419 則重新執行 init 函數
+    await init()
+
+    // 再次請求並且給予失敗處理函數
+    res = await request591api(query)
+      .catch(handleRequestError)
+
+    // 若請求又失敗此條件式會成立
+    if (!res) return undefined
+  }
+
+  return res.data
+}
+
+// 給予 URL 參數向 591 api 請求資料
+function request591api(query: string) {
   const region = query.split('&').filter(param => param.split('=')[0] === 'region')[0].split('=')[1]
-  const res = await axios({
+  return axios({
     method: 'GET',
-    url: `${apiURL}?${query}${firstRow ? `&firstRow=${firstRow}` : ''}`,
+    url: `${apiURL}?${query}`,
     responseType: 'json',
     headers: {
       'X-CSRF-TOKEN': CSRF_Token,
       'Cookie': `591_new_session=${new_591_session}; urlJumpIp=${region}`
     }
   })
+}
 
-  getSessionKeyFromResponse(res)
+// 確認 Token, Session 及有效期限是否為有效的，否則執行 init 函數
+async function checkVariableValid() {
+  const now = new Date()
+  const validDuration = 29 * 60 * 1000
+  const isValidDuration = dateFromLastToken ?
+    (now.valueOf() - dateFromLastToken.valueOf() < validDuration) : false
 
-  return res.data
+  if (!CSRF_Token ||
+    !new_591_session ||
+    !isValidDuration) {
+    await init()
+  }
+}
+
+function handleRequestError(error: AxiosError): undefined {
+  console.log(`handleRequestError: ${error}`)
+
+  // TODO: logger
+  return undefined
 }
 
 export interface RentalData {

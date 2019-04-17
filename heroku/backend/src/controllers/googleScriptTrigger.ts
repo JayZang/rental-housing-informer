@@ -9,7 +9,7 @@ import User, { UserDocumentType } from '../models/User'
 import { SubscriptionRecordDocumentType } from '../models/RentalSubscriptionRecord591'
 
 const router = express.Router()
-const lineClinet = new Client(lineConfig)
+const lineClient = new Client(lineConfig)
 const GSTK = appConfig.googleScriptTriggerKey
 
 router.get('/hours', checkIsFromValid, routeHours)
@@ -21,6 +21,8 @@ export default router
 async function routeHours(req: Request, res: Response) {
   const promises: Promise<any>[] = []
   const users = await User.findHoursPushTargets()
+
+  await service591.init()
   users.forEach((user: UserDocumentType) => {
     const promise = new Promise(async (resolve, reject) => {
       // 判斷有無訂閱
@@ -29,7 +31,7 @@ async function routeHours(req: Request, res: Response) {
       const subscription591 = <SubscriptionRecordDocumentType><any>user.subscription591[0]
       const queryString = subscription591.queryString
       const lineId = user.lineId
-      const rentalData = await service591.getRentalByQueryString(queryString)
+      const rentalData = await service591.getRentals(queryString)
 
       // 取得未於已讀記錄中的租屋資訊，最多拿10筆顯示於 line 上
       const unReadRental = rentalData
@@ -41,7 +43,7 @@ async function routeHours(req: Request, res: Response) {
 
       const bubbleList = unReadRental.map(item => lineUtil.getRentalBubbleTemplate(item))
       const savePromise = unReadRental.length > 0 ? subscription591.save() : Promise.resolve()
-      const linePromise = bubbleList.length > 0 ? lineClinet.pushMessage(lineId, {
+      const linePromise = bubbleList.length > 0 ? lineClient.pushMessage(lineId, {
         type: 'flex',
         altText: `您有${unReadRental.length}筆新租屋物件`,
         contents: {
@@ -57,9 +59,12 @@ async function routeHours(req: Request, res: Response) {
     promises.push(promise)
   })
 
-  // 等待 DB 儲存好及 line 發送完畢之後返回 http response
   Promise.all(promises)
-    .then(() => res.send('ok'))
+    .then(() => undefined)
+
+  // 不等待 DB 儲存好及 line 發送完畢才返回 http response
+  // 避免等待回覆過久
+  res.send('ok')
 }
 
 ////////// 自訂函數 //////////
