@@ -10,3 +10,9 @@ export function updateLoginStatus(payload: {
     payload
   }
 }
+
+export function clearLoginStatue(): SystemActionTypes {
+  return {
+    type: 'CLEAR_LOGIN_STATUS'
+  }
+}

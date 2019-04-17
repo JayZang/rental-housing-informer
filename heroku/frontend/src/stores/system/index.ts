@@ -1,6 +1,6 @@
 import * as authApi from '../../apis/authentication'
 import store from '../'
-import { updateLoginStatus } from './actions'
+import { updateLoginStatus, clearLoginStatue } from './actions'
 
 const dispatch = store.dispatch.bind(store)
 
@@ -44,4 +44,11 @@ export async function certLoginToken() {
     userNickname: data.user.nickName,
     loginToken
   }))
+}
+
+export function logout() {
+  const loginTokenStorageKey = store.getState().system.loginTokenStorageKey
+
+  localStorage.removeItem(loginTokenStorageKey)
+  dispatch(clearLoginStatue())
 }

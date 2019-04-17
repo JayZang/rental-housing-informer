@@ -10,6 +10,10 @@
     &:hover {
       background-color: #f3f3f3;
     }
+
+    + .user-ctrl-item {
+      border-top: 1px solid rgba(0, 0, 0, 0.2);
+    }
   }
 
   .user-info-container {
@@ -44,6 +48,15 @@
       transform: translateY(-50%);
       opacity: 0.4;
       font-size: 16px;
+    }
+  }
+
+  .user-logout-container {
+    text-align: center;
+    font-weight: bold;
+
+    &:hover {
+      color: #ff8000;
     }
   }
 }

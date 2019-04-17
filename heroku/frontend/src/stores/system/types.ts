@@ -18,6 +18,7 @@ export interface SystemState {
  * Action
  */
 export const UPDATE_LOGIN_STATUS = 'UPDATE_LOGIN_STATUS'
+export const CLEAR_LOGIN_STATUS = 'CLEAR_LOGIN_STATUS'
 
 interface UpdateLoginStatusAction {
   type: typeof UPDATE_LOGIN_STATUS
@@ -28,4 +29,8 @@ interface UpdateLoginStatusAction {
   }
 }
 
-export type SystemActionTypes = UpdateLoginStatusAction
+interface ClearLoginStatusAction {
+  type: typeof CLEAR_LOGIN_STATUS
+}
+
+export type SystemActionTypes = UpdateLoginStatusAction | ClearLoginStatusAction

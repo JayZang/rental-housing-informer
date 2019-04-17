@@ -1,5 +1,6 @@
 import { 
   UPDATE_LOGIN_STATUS,
+  CLEAR_LOGIN_STATUS,
   SystemState,
   SystemActionTypes
 } from './types'
@@ -28,6 +29,10 @@ export function SystemReducer(state = initState, action: SystemActionTypes): Sys
         loggedIn: true,
         loginTimestamp: new Date()
       }
+
+    case CLEAR_LOGIN_STATUS:
+      return initState
+
     default: 
       return state
   }

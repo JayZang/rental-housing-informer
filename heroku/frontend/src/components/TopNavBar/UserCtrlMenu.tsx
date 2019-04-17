@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { RootState } from '../../stores'
 import { IUser } from '../../stores/system/types'
+import * as systemStore from '../../stores/system'
 import DefaultUserCoverImg from '../../assets/img/default-user-cover-img.png'
 import './UserCtrlMenu.scss'
 
@@ -26,6 +27,9 @@ class UserCtrlMenu extends Component<UserCtrlMenuProps> {
             </div>
             <i className="fas fa-cog"></i>
           </div>
+        </div>
+        <div className="user-ctrl-item user-logout-container" onClick={systemStore.logout}>
+          登出
         </div>
       </div>
     )
