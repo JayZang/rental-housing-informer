@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 import './TopNavBar.scss'
-import UserCtrlMenu from '../UserCtrlMenu'
+import UserLogInBar from './UserLogInBar'
 
 interface TopNavBarProps {
   title: string
@@ -18,7 +18,7 @@ class TopNavBar extends Component<TopNavBarProps> {
           </div>
         </div>
         <div className="field right-field">
-          <UserCtrlMenu />
+          <UserLogInBar />
         </div>
       </div>
     )

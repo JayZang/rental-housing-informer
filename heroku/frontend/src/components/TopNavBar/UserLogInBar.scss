@@ -1,4 +1,4 @@
-#user-ctrl-menu {
+#user-login-bar {
   display: flex;
   padding: 0 10px;
   user-select: none;
@@ -22,7 +22,29 @@
   .user-logged-in-container {
     display: flex;
     align-items: center;
-    font-weight: bold;
     cursor: pointer;
+    position: relative;
+
+    .cover-content {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      overflow: hidden;
+      transition: 300ms;
+
+      &:hover {
+        transform: scale(1.1);
+      }
+
+      img {
+        width: 100%;
+      }
+    }
+
+    .user-ctrl-container {
+      position: absolute;
+      right: 0;
+      top: 100%;
+    }
   }
 }

@@ -1,0 +1,49 @@
+#user-ctrl-menu {
+  width: 350px;
+  background-color: white;
+  box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.6);
+
+  .user-ctrl-item {
+    padding: 10px;
+    transition: 300ms;
+
+    &:hover {
+      background-color: #f3f3f3;
+    }
+  }
+
+  .user-info-container {
+    display: flex;
+    position: relative;
+    
+    .user-cover-img-container {
+      width: 70px;
+      margin-right: 10px;
+
+      img {
+        width: 100%;
+      }
+    }
+
+    .user-content-container {
+
+      .user-nickname {
+        font-size: 16px;
+        font-weight: bold;
+      }
+
+      .user-account {
+        opacity: 0.8;
+      }
+    }
+
+    .fa-cog {
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      opacity: 0.4;
+      font-size: 16px;
+    }
+  }
+}

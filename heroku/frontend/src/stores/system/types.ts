@@ -1,10 +1,14 @@
 /**
  * State
  */
+export interface IUser {
+  id: string
+  nickname: string
+}
+
 export interface SystemState {
   loggedIn: boolean
-  userId: string
-  userNickname: string
+  user: IUser,
   loginTimestamp: Date | null,
   loginToken: string
   loginTokenStorageKey: string

@@ -6,8 +6,10 @@ import {
 
 const initState: SystemState = {
   loggedIn: false,
-  userId: '',
-  userNickname: '',
+  user: {
+    id: '',
+    nickname: ''
+  },
   loginToken: '',
   loginTokenStorageKey: 'dfg879dfgd',
   loginTimestamp: null
@@ -18,7 +20,11 @@ export function SystemReducer(state = initState, action: SystemActionTypes): Sys
     case UPDATE_LOGIN_STATUS:
       return {
         ...state,
-        ...action.payload,
+        user: {
+          id: action.payload.userId,
+          nickname: action.payload.userNickname
+        },
+        loginToken: action.payload.loginToken,
         loggedIn: true,
         loginTimestamp: new Date()
       }
