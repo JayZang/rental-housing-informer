@@ -13,11 +13,7 @@
     width: 100%;
     top: 0;
     animation: app-top-nav-bar-show 1s;
-  }
-
-  .app-content {
-    max-width: 1200px;
-    margin: 50px auto;
+    z-index: 1;
   }
 }
 
