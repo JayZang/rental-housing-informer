@@ -20,7 +20,7 @@ class Features extends Component<{}, FeaturesState> {
         title: "Line 定時推播"
       }, {
         mainImg: pic591,
-        title: "訂閱 591 租屋搜尋"
+        title: "訂閱 591 租屋"
       }]
     }
   }
@@ -28,6 +28,16 @@ class Features extends Component<{}, FeaturesState> {
   render() {
     return (
       <div className="features-container">
+        <div className="feature-header-container">
+          <div className="header-title">
+            <div className="tw">
+              功能
+            </div>
+            <div className="en">
+              FEATURES
+            </div>
+          </div>
+        </div>
         <div className="features-content">
           {this.state.features
             .map((feature, index) => (<FeatureItem mainImg={feature.mainImg} title={feature.title} key={index} />))}

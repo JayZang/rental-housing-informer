@@ -25,6 +25,13 @@ class Home extends Component {
             <img className="img-walker walker03" src={walker03} alt=""/>
             <img className="img-walker walker04" src={walker04} alt=""/>
         </div>
+        <div className="home-welcome-container">
+          <div className="welcome-content-container">
+            <div className="welcome-title">
+              歡迎使用 <span>租屋小幫手</span>
+            </div>
+          </div>
+        </div>
         <div className="home-page-content" ref={this.contentRef}>
           <div className="btn-scroll-to-content" onClick={this.handleScrollToContent}>
             <div className="arrow">
