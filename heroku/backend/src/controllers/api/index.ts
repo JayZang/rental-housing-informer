@@ -1,5 +1,7 @@
 import authenticationRouter from './authentication'
+import rental591Router from './591'
 
 export default [
-  authenticationRouter
+  authenticationRouter,
+  rental591Router
 ]

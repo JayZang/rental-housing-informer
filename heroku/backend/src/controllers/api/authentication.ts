@@ -163,6 +163,18 @@ async function handleLogin(req: Request, res: Response) {
       errFields: errors,
       errMsg: '帳號或密碼錯誤'
     })
+  } else if (!user.authInform.isAuth) {
+    return res.send({
+      result: false,
+      errFields: errors,
+      errMsg: '認證尚未完成'
+    })
+  } else if (!user.isLineFollowing) {
+    return res.send({
+      result: false,
+      errFields: errors,
+      errMsg: '此用戶尚未追蹤 Line 機器人'
+    })
   }
 
   const partialUserInfo = {
