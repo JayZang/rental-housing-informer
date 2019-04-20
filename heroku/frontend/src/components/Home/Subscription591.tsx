@@ -1,8 +1,15 @@
 import React, { Component, ChangeEvent } from 'react'
+import { connect } from 'react-redux'
+import { withRouter, RouteComponentProps } from 'react-router-dom'
 import './Subscription591.scss'
 import LoadingAnimation from '../LoadingAnimation'
 import * as api591 from '../../apis/591'
-import store from '../../stores'
+import { RootState } from '../../stores'
+
+interface Subscription591Props extends RouteComponentProps {
+  isLogIn: boolean,
+  loginToken: string
+}
 
 interface Subscription591States {
   inputField: {
@@ -18,7 +25,7 @@ interface Subscription591States {
   isSuccess: boolean
 }
 
-class Subscription591 extends Component<{}, Subscription591States> {
+class Subscription591 extends Component<Subscription591Props, Subscription591States> {
   constructor(prop: any) {
     super(prop)
 
@@ -38,6 +45,11 @@ class Subscription591 extends Component<{}, Subscription591States> {
       isLoading: false,
       isSuccess: false
     }
+  }
+
+  componentWillMount() {
+    if (!this.props.isLogIn)
+      this.props.history.push('/')
   }
 
   render() {
@@ -109,7 +121,7 @@ class Subscription591 extends Component<{}, Subscription591States> {
     this.setState({ fieldErrMsg: { title: '', url: '' } })
     const title = this.state.inputField.title
     const url = this.state.inputField.url
-    const authToken = store.getState().system.loginToken
+    const authToken = this.props.loginToken
 
     this.setState({ isLoading: true })
     const requestPromise = api591.addSubscription(authToken, {title, url})
@@ -133,4 +145,9 @@ class Subscription591 extends Component<{}, Subscription591States> {
   }
 }
 
-export default Subscription591
+const mapStateToProps = (state: RootState) => ({
+  isLogIn: state.system.loggedIn,
+  loginToken: state.system.loginToken
+})
+
+export default connect(mapStateToProps)(withRouter(Subscription591))
