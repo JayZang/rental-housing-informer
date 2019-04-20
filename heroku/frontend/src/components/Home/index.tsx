@@ -19,6 +19,7 @@ class Home extends Component {
   render() {
     return (
       <div id='home-page'>
+      <div className="pace"></div>
         <div className="img-banner" style={{ backgroundImage: `url(${HomeBanner})`}}>
             <img className="img-walker walker01" src={walker01} alt=""/>
             <img className="img-walker walker02" src={walker02} alt=""/>
