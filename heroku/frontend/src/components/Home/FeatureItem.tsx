@@ -2,7 +2,8 @@ import React, { Component } from 'react'
 
 interface FeatureItemProps {
   mainImg: string,
-  title: string
+  title: string,
+  onClick: (() => void) | undefined
 }
 
 class FeatureItem extends Component<FeatureItemProps> {
@@ -12,7 +13,7 @@ class FeatureItem extends Component<FeatureItemProps> {
   
   render() {
     return (
-      <div className="feature-item-container">
+      <div className="feature-item-container" onClick={this.props.onClick}>
         <div className="feature-item-main-img-container">
           <img className="feature-item-main-img" src={this.props.mainImg} alt="" />
         </div>

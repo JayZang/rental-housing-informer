@@ -1,0 +1,43 @@
+#subscription-591 {
+  padding: 20px;
+  background-color: rgba(255, 2255, 255, 0.75);
+  border-radius: 5px;
+  min-width: 370px;
+  margin: 0 20px;
+
+  .subscription-title-container {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+
+  .subscription-content-container {
+    display: flex;
+
+    .left {
+      flex: 1;
+    }
+
+    .btn-submit {
+      background-color: #ff8000;
+      border: #ff8000;
+      height: 100%;
+
+      &:focus {
+        box-shadow: 0 0 0 0.2rem  rgba(255, 128, 0, 0.5);
+      }
+    }
+  }
+
+  .alert-danger,
+  .alert-success {
+    margin-top: 10px;
+  }
+}
+
+@media(max-width: 410px) {
+  #subscription-591 {
+    width: 100%;
+    min-width: auto;
+  }
+}

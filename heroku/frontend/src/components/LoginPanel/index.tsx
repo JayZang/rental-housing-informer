@@ -59,7 +59,9 @@ class LoginPanel extends Component<LoginPanelProps, LoginPanelStates> {
         <hr className="title-separator-hr" />
         {
           this.state.isLogging ?
-            <LoadingAnimation/> :
+            <div className="loading-panel">
+              <LoadingAnimation />
+            </div> :
             this.renderLoginForm()
         }
       </div>

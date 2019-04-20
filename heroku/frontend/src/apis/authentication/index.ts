@@ -1,4 +1,4 @@
-import axios, { AxiosPromise, AxiosError } from 'axios'
+import axios from 'axios'
 import {
   SignUpRequestData,
   SignUpResponseData,

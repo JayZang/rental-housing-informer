@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Route } from 'react-router-dom'
+import { Route, Switch } from 'react-router-dom'
 import './App.scss'
 import TopNavBar from './components/TopNavBar'
 import Home from './components/Home'
@@ -56,9 +56,11 @@ class App extends Component<{}, AppState> {
           <TopNavBar title='租屋小幫手' />
         </div>
         <div className="app-content">
-          <Route exact path="/" component={Home} />
-          <Route exact path="/authentication/:userId" component={Authentication} />
-          <Route exact path="/login" component={LoginPanel} />
+          <Switch>
+            <Route exact path="/authentication/:userId" component={Authentication} />
+            <Route exact path="/login" component={LoginPanel} />
+            <Route path="/" component={Home} />
+          </Switch>
         </div>
       </div>
     )
