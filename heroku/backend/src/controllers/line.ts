@@ -49,7 +49,7 @@ function replyHandleEvent(event: WebhookEvent): Promise<any> {
 
 // 處理加好友事件
 async function handleFollow(replyToken: string, lineId: string): Promise<any> {
-  let user = await User.findOne({ lineId })
+  let user = await User.findByLineId(lineId)
 
   // 若是資料庫無此 Line ID 資料則為全新用戶，寫入新 Line 用戶，但未被認證
   // 若是資料庫已有此 Line ID，代表為舊用戶刪除後又新增好友
@@ -78,7 +78,7 @@ async function handleFollow(replyToken: string, lineId: string): Promise<any> {
 
 // 處理封鎖事件
 async function handleUnfollow(lineId: string): Promise<any> {
-  const user = await User.findOne({ lineId })
+  const user = await User.findByLineId(lineId)
 
   if (!user) return Promise.resolve()
 

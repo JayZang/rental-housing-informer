@@ -79,11 +79,11 @@ function getNon591SubscriptionHintButtonTemplate(): TemplateMessage {
     template: {
       type: 'buttons',
       title: '租屋訂閱',
-      text: '您尚未有租屋訂閱資料，點選按鍵前往訂閱',
+      text: '您尚未有租屋訂閱資料，點選按鍵前往網站登入後訂閱',
       actions: [{
         label: '前往訂閱',
         type: 'uri',
-        uri: `${appConfig.domain}/subscription`
+        uri: `${appConfig.domain}`
       }]
     }
   }
@@ -144,8 +144,9 @@ function getRentalBubbleTemplate(item: RentalData): FlexBubble {
       layout: 'vertical',
       contents: [{
         type: 'button',
-        style: 'link',
+        style: 'primary',
         height: 'sm',
+        color: '#ff8000',
         action: {
           type: 'uri',
           label: '591 連結',
