@@ -1,0 +1,59 @@
+#loginView {
+  display: flex;
+  height: calc(100vh - 45px);
+  position: relative;
+
+  .left-container {
+    background-image: url(../../assets/img/login-view-bkg-img.jpg);
+    background-size: cover;
+    background-position: center;
+    flex: 1;
+  }
+
+  .right-container {
+    min-width: 320px;
+    width: 30%;
+    background-color: white;
+    height: calc(100vh - 45px);
+    overflow-y: scroll;
+
+    > div {
+      height: 100%;
+      margin: 0;
+      padding: 50px 30px; 
+    }
+  }
+}
+
+@media(max-width: 770px) {
+  #loginView {
+    .left-container {
+      filter: blur(4px);
+      position: absolute;
+      width: 100%;
+      height: 100%;
+    }
+
+    .right-container {
+      width: 100%;
+      background-color: inherit;
+      z-index: 0;
+
+      > div {
+        height: initial;
+        margin: 50px auto;
+      }
+    }
+  }
+}
+
+@media(max-width: 600px) {
+  #loginView {
+    .right-container {
+      > div {
+        height: initial;
+        margin: 50px 20px;
+      }
+    }
+  }
+}

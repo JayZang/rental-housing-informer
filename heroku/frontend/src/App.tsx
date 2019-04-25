@@ -3,7 +3,7 @@ import { Route, Switch } from 'react-router-dom'
 import './App.scss'
 import TopNavBar from './components/TopNavBar'
 import Home from './components/Home'
-import LoginPanel from './components/LoginPanel'
+import LoginView from './components/LoginView'
 import Authentication from './components/Authentication'
 import LoadingAnimation from './components/LoadingAnimation'
 import * as systemStore from './stores/system'
@@ -58,7 +58,7 @@ class App extends Component<{}, AppState> {
         <div className="app-content">
           <Switch>
             <Route exact path="/authentication/:userId" component={Authentication} />
-            <Route exact path="/login" component={LoginPanel} />
+            <Route exact path="/login" component={LoginView} />
             <Route path="/" component={Home} />
           </Switch>
         </div>

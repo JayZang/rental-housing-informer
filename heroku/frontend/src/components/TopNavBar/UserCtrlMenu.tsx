@@ -35,7 +35,7 @@ class UserCtrlMenu extends Component<UserCtrlMenuProps> {
           </div>
         </div>
         <div className="user-ctrl-item user-logout-container" onClick={this.handleLogoutClick}>
-          登出
+          <i className="ti-power-off mR-10"></i>  登出
         </div>
       </div>
     )

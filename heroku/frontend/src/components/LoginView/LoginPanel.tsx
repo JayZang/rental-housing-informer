@@ -1,6 +1,7 @@
-import React, { Component, ChangeEvent } from 'react'
+import React, { Component, ChangeEvent, KeyboardEvent } from 'react'
 import { Redirect } from 'react-router-dom'
 import { connect } from 'react-redux'
+import { Key } from 'ts-keycode-enum';
 import './LoginPanel.scss'
 import LoadingAnimation from '../LoadingAnimation'
 import * as systemStore from '../../stores/system'
@@ -31,6 +32,7 @@ class LoginPanel extends Component<LoginPanelProps, LoginPanelStates> {
     this.handleAccountFieldChange = this.handleAccountFieldChange.bind(this)
     this.handlePasswordFieldChange = this.handlePasswordFieldChange.bind(this)
     this.handleLoginSubmitBtnClick = this.handleLoginSubmitBtnClick.bind(this)
+    this.handleInputEnter = this.handleInputEnter.bind(this)
 
     this.state = {
       formField: {
@@ -87,6 +89,7 @@ class LoginPanel extends Component<LoginPanelProps, LoginPanelStates> {
               placeholder="帳號"
               title="帳號"
               value={this.state.formField.account}
+              onKeyDown={this.handleInputEnter}
               onChange={this.handleAccountFieldChange} />
           </div>
           <div className="login-panel-form-item">
@@ -98,6 +101,7 @@ class LoginPanel extends Component<LoginPanelProps, LoginPanelStates> {
               placeholder="密碼"
               title="密碼"
               value={this.state.formField.password}
+              onKeyDown={this.handleInputEnter}
               onChange={this.handlePasswordFieldChange} />
           </div>
           <button type="button"
@@ -134,15 +138,20 @@ class LoginPanel extends Component<LoginPanelProps, LoginPanelStates> {
     const loginPromise = systemStore.login(account, password)
     const timeoutPromise = new Promise(resolve => setTimeout(() => resolve(), 1500))
     const [res] = await Promise.all([loginPromise, timeoutPromise])
-    this.setState({ isLogging: false })
 
     if (!res.result) {
+      this.setState({ isLogging: false })
       const errMsg = res.errMsg || ''
       let fieldErrMsg = this.state.fieldErrMsg
       Object.keys(fieldErrMsg).forEach(key => fieldErrMsg[key] = '')
       Object.keys(res.errFields).forEach(key => fieldErrMsg[key] = res.errFields[key].msg)
       this.setState({ fieldErrMsg, errMsg })
     }
+  }
+
+  handleInputEnter(event: KeyboardEvent<HTMLInputElement>) {
+    if (event.which === Key.Enter)
+      this.handleLoginSubmitBtnClick()
   }
 }
 
