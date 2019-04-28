@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { withRouter, RouteComponentProps } from 'react-router-dom'
+import { Link, withRouter, RouteComponentProps } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { RootState } from '../../stores'
 import { IUser } from '../../stores/system/types'
@@ -20,7 +20,7 @@ class UserCtrlMenu extends Component<UserCtrlMenuProps> {
   render() {
     return (
       <div id="user-ctrl-menu">
-        <div className="user-ctrl-item user-info-container">
+        <Link className="user-ctrl-item user-info-container" to="/console">
           <div className="user-cover-img-container">
             <img src={DefaultUserCoverImg} alt=""/>
           </div>
@@ -33,7 +33,7 @@ class UserCtrlMenu extends Component<UserCtrlMenuProps> {
             </div>
             <i className="fas fa-cog"></i>
           </div>
-        </div>
+        </Link>
         <div className="user-ctrl-item user-logout-container" onClick={this.handleLogoutClick}>
           <i className="ti-power-off mR-10"></i>  登出
         </div>

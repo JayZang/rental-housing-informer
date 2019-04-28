@@ -6,6 +6,7 @@ import Home from './components/Home'
 import LoginView from './components/LoginView'
 import Authentication from './components/Authentication'
 import LoadingAnimation from './components/LoadingAnimation'
+import ConsoleTable from './components/ConosleTable'
 import * as systemStore from './stores/system'
 
 interface AppState {
@@ -59,6 +60,7 @@ class App extends Component<{}, AppState> {
           <Switch>
             <Route exact path="/authentication/:userId" component={Authentication} />
             <Route exact path="/login" component={LoginView} />
+            <Route exact path="/console" component={ConsoleTable} />
             <Route path="/" component={Home} />
           </Switch>
         </div>
