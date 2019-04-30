@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, NavLink } from 'react-router-dom'
+import './LeftSideBar.scss'
 
 class LeftSideBar extends Component {
   render() {
@@ -9,12 +10,12 @@ class LeftSideBar extends Component {
           <div className="sidebar-inner">
             <ul className="sidebar-menu scrollable pos-r">
               <li className="nav-item mT-30 active">
-                <Link className="sidebar-link" to="/console/">
+                <NavLink className="sidebar-link" activeClassName="active" to="/console/user">
                   <span className="icon-holder">
-                    <i className="c-blue-500 ti-home"></i>
+                    <i className="c-blue-500 ti-user"></i>
                   </span>
-                  <span className="title">Dashboard</span>
-                </Link>
+                  <span className="title">User</span>
+                </NavLink>
               </li>
               <li className="nav-item">
                 <Link className='sidebar-link' to="/console">

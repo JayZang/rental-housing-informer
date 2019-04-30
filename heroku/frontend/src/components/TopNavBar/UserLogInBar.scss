@@ -26,18 +26,16 @@
     position: relative;
 
     .cover-content {
-      width: 30px;
-      height: 30px;
-      border-radius: 50%;
-      overflow: hidden;
-      transition: 300ms;
-
-      &:hover {
-        transform: scale(1.1);
+      img {
+        height: 30px;
+        width: 30px;
+        border-radius: 50%;
+        overflow: hidden;
       }
 
-      img {
-        width: 100%;
+      .cover-user-name {
+        margin-left: 5px;
+        font-weight: bold;
       }
     }
 
@@ -45,6 +43,21 @@
       position: absolute;
       right: 0;
       top: 100%;
+      transform: scale(0);
+      transform-origin: top right;
+      transition: transform .15s ease-out, -webkit-transform .15s ease-out;
+
+      &.show {
+        transform: scale(1);
+      }
+    }
+  }
+}
+
+@media(max-width: 600px) {
+  #user-login-bar {
+    .cover-user-name {
+      display: none;
     }
   }
 }

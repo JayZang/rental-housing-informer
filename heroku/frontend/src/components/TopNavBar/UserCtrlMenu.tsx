@@ -20,7 +20,7 @@ class UserCtrlMenu extends Component<UserCtrlMenuProps> {
   render() {
     return (
       <div id="user-ctrl-menu">
-        <Link className="user-ctrl-item user-info-container" to="/console">
+        <Link className="user-ctrl-item user-info-container" to="/console/user">
           <div className="user-cover-img-container">
             <img src={DefaultUserCoverImg} alt=""/>
           </div>
@@ -35,7 +35,7 @@ class UserCtrlMenu extends Component<UserCtrlMenuProps> {
           </div>
         </Link>
         <div className="user-ctrl-item user-logout-container" onClick={this.handleLogoutClick}>
-          <i className="ti-power-off mR-10"></i>  登出
+          <i className="ti-power-off"></i> 登出
         </div>
       </div>
     )

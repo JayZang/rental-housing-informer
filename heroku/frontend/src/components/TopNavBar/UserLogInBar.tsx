@@ -8,6 +8,7 @@ import UserCtrlMenu from './UserCtrlMenu'
 
 interface UserLogInBarProps {
   loggedIn: boolean
+  userNickName: string
 }
 
 interface UserLogInBarStates {
@@ -20,6 +21,7 @@ class UserLogInBar extends Component<UserLogInBarProps, UserLogInBarStates> {
 
     this.handleUserCoverImgClick = this.handleUserCoverImgClick.bind(this)
     this.handleRootDomClick = this.handleRootDomClick.bind(this)
+    this.handleUserCtrlCLick = this.handleUserCtrlCLick.bind(this)
 
     this.state = {
       isShowCtrlMenu: false
@@ -50,13 +52,13 @@ class UserLogInBar extends Component<UserLogInBarProps, UserLogInBarStates> {
         <div className="user-cover-container" onClick={this.handleUserCoverImgClick}>
           <div className="cover-content">
             <img src={DefaultUserCoverImg} alt=""/>
+            <span className="cover-user-name">{this.props.userNickName}</span>
           </div>
         </div>
-        <div className="user-ctrl-container">
-          {
-            this.state.isShowCtrlMenu ?
-              <UserCtrlMenu /> : null
-          }
+        <div 
+          className={`user-ctrl-container ${this.state.isShowCtrlMenu ? ' show': ''}`} 
+          onClick={this.handleUserCtrlCLick}>
+          <UserCtrlMenu />
         </div>
       </div>
     )
@@ -76,10 +78,15 @@ class UserLogInBar extends Component<UserLogInBarProps, UserLogInBarStates> {
     const isShow = this.state.isShowCtrlMenu
     this.setState({ isShowCtrlMenu: !isShow })
   }
+
+  handleUserCtrlCLick() {
+    this.setState({ isShowCtrlMenu: false })
+  }
 }
 
 const mapStatesToProps = (state: RootState) => ({
-  loggedIn: state.system.loggedIn
+  loggedIn: state.system.loggedIn,
+  userNickName: state.system.user.nickname
 })
 
 export default connect(mapStatesToProps)(UserLogInBar)
