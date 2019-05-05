@@ -11,8 +11,11 @@ import fs from 'fs'
 // Mongo DB 連線
 const mongoUri = appConfig.mongoUri
 mongoose.Promise = Promise
-mongoose.connect(mongoUri, {useNewUrlParser: true})
-  .then(() => console.log('資料庫連線成功'))
+mongoose.connect(mongoUri, {
+  useNewUrlParser: true,
+  autoReconnect: true,
+  poolSize: 5
+}).then(() => console.log('資料庫連線成功'))
   .catch(err => console.log('資料庫線失敗', err.toString()))
 
 const app = express()
