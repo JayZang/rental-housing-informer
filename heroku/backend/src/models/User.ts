@@ -1,11 +1,19 @@
 import mongoose, { Document, Model, DocumentQuery } from 'mongoose'
 import bcryptjs from 'bcryptjs'
+import crypto from 'crypto'
 import { modelName as modelName591 } from './RentalSubscriptionRecord591'
 
 const UserSchema = new mongoose.Schema<UserDocumentType>({
   account: {
     type: String,
-    unique: true
+    unique: true,
+    default: function () {
+      const sha256 = crypto.createHash('sha256')
+      const now = new Date()
+      const lineId = this.lineId || ''
+
+      return sha256.update(`${lineId}.${now.valueOf()}`).digest('hex')
+    }
   },
   password: String,
   fullName: String,
